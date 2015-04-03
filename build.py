@@ -37,7 +37,7 @@ if __name__ == '__main__':
   for presentation in slide_files:
     print('Processing {}'.format(presentation))
     with open(presentation,'r') as fd:
-      with open('{}.test.html'.format(presentation.split('.')[0]), 'w') as out:
+      with open('{}.html'.format(presentation.split('.')[0]), 'w') as out:
         out.write(top)
         slides = fd.readlines()
         for slide in slides:
