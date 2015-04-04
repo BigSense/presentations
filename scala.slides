@@ -1,13 +1,10 @@
 title-scala.html
-bigsense-beginnings.md
-cso-videos.html
-gls-photos.html
-method-specs.html
-e2100l.html
-gls-cabinet.html
-gls-gps-table.html
-tech-stack.md
+cso-gls.set
 scala-overview.md
 java-frameworks.html
 resteasy-post.html, resteasy-delete.html, resteasy-get.html
-servlet.html, servlet-csc202.html, servlet-core.html
+servlet.html, servlet-csc202.html, servlet-core.html, servlet-service-code.html
+bigsense-components.md
+scala-action-request.html, scala-action-response.html, scala-action-trait.html, scala-action-query.html
+scala-validation-trait.html, scala-validation-example.html
+scala-security-trait.html, scala-security-disabled.html, scala-security-signature.html

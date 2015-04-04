@@ -17,12 +17,30 @@ md_section = """
 """
 
 def slide_content(slide):
-  with open(path.join('slides', slide.strip()),'r') as section:
-    if slide.strip().endswith('html'):
-      return html_section.format(section.read())
-    if slide.strip().endswith('md'):
-      return md_section.format(section.read())
-    return 'unknown markup type'
+  if slide.strip().endswith('set'):
+    with open(path.join('sets', slide.strip()), 'r') as fd:
+      return slide_file(fd)
+  else:  
+    with open(path.join('slides', slide.strip()),'r') as section:
+      if slide.strip().endswith('html'):
+        return html_section.format(section.read())
+      if slide.strip().endswith('md'):
+        return md_section.format(section.read())
+      return 'unknown markup type'
+
+def slide_file(fd):
+  slides = fd.readlines()
+  content = ''
+  for slide in slides:
+    if ',' in slide:
+      sub_content = ''
+      for sub_slide in slide.split(','):
+        sub_content += slide_content(sub_slide.strip())
+      content += '<section>{}</section>'.format(sub_content) 
+    else:
+      content += slide_content(slide)
+  return content
+
 
 if __name__ == '__main__':
 
@@ -39,15 +57,7 @@ if __name__ == '__main__':
     with open(presentation,'r') as fd:
       with open('{}.html'.format(presentation.split('.')[0]), 'w') as out:
         out.write(top)
-        slides = fd.readlines()
-        for slide in slides:
-          content = ''
-          if ',' in slide:
-            for sub_slide in slide.split(','):
-              content += slide_content(sub_slide.strip())
-            out.write('<section>{}</section>'.format(content)) 
-          else:
-            out.write(slide_content(slide))
+        out.write(slide_file(fd))
         out.write(bottom)
 
 
