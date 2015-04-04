@@ -1,0 +1,6 @@
+<h3>Security</h3>
+<pre><code class="hljs scala">class DisabledSecurityManager extends SecurityManagerTrait {
+
+  def securityFilter(request: ActionRequest): Boolean = { true }
+
+}</code></pre>

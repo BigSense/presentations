@@ -1,0 +1,31 @@
+<h3>Security</h3>
+<pre><code class="hljs scala">class SignatureSecurityManageer extends SecurityManagerTrait {
+
+    def loadPublicKey(relayId : String) : PublicKey = {...}
+      
+    def securityFilter(req : ActionRequest) : Boolean = {
+      
+      if( req.method.equals("POST") ) {
+        if(req.models.length != 1) {
+          throw new SecurityManagerException("Only single model POST requests are supported with signature verificaiton")
+        }
+        if(!req.models(0).isInstanceOf[DataModel]) {
+          throw new SecurityManagerException("Only data models are supported for verification")
+        }
+        
+        val sg = Signature.getInstance("SHA1withRSA");
+        sg.initVerify(loadPublicKey(req.models(0).uniqueId))
+
+        req.signature match {
+          case None => throw new SecurityManagerException("No Signature Found")
+          case Some(sig : String) => {
+            sg.update(req.data.trim().getBytes())
+            return sg.verify(DatatypeConverter.parseBase64Binary(sig))
+          }
+        }
+
+       }
+      //no security for GET/queries yet
+      true
+    }
+}</code></pre>

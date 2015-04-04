@@ -1,0 +1,16 @@
+<h3>Validation</h3>
+<pre><code class="hljs scala">trait ValidatorTrait {
+
+  val BAD_REQUEST = HttpServletResponse.SC_BAD_REQUEST
+  val NOT_IMPLEMENTED = HttpServletResponse.SC_NOT_IMPLEMENTED
+  val METHOD_NOT_ALLOWED = HttpServletResponse.SC_METHOD_NOT_ALLOWED
+  
+  protected def checkInt(obj : Any) : Boolean = {...}
+
+  protected def checkLong(obj : Any) : Boolean = {...}
+
+  protected def checkDate(obj : String) : Boolean = {...}
+  
+  def validateRequest(req : ActionRequest) : Option[ValidationError]
+  
+}</code></pre>

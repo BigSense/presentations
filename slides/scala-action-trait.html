@@ -1,0 +1,14 @@
+<h3>Actions</h3>
+<pre><code class="hljs scala">import scala.reflect.BeanProperty
+import io.bigsense.db.ServiceDataHandlerTrait
+import io.bigsense.validation.ValidatorTrait
+
+trait ActionTrait  {
+
+    @BeanProperty var dbHandler : ServiceDataHandlerTrait = _
+
+    @BeanProperty var validator : ValidatorTrait = _
+  
+    def runAction(aReq : ActionRequest) : Response
+    
+}</code></pre>

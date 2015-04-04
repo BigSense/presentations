@@ -1,0 +1,21 @@
+<h3>Validation</h3>
+<pre><code class="hljs scala">class QueryActionValidator extends ValidatorTrait {
+
+  def validateRequest(aReq: ActionRequest): Option[ValidationError] = {
+
+    aReq.method match {
+      case "GET" => {
+        if (aReq.args.length >= 2) {
+          aReq.args(1) match {
+            case "Latest" => {
+              if (aReq.args.length != 3) {
+                return Some(new ValidationError("Latest Requires a Limit Argument", BAD_REQUEST))
+              }
+              else if (!checkInt(aReq.args(2))) {
+                return Some(new ValidationError("Limit Argument Must be an Integer", BAD_REQUEST))
+              }
+            }
+            case "TimestampRange" => {
+              if (aReq.args.length != 4)
+              ...
+</code></pre>
