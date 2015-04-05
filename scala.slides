@@ -7,4 +7,5 @@ servlet.html, servlet-csc202.html, servlet-core.html, servlet-service-code.html
 bigsense-components.md
 scala-action-request.html, scala-action-response.html, scala-action-trait.html, scala-action-query.html
 scala-validation-trait.html, scala-validation-example.html
-scala-security-trait.html, scala-security-disabled.html, scala-security-signature.html
+scala-format-trait.html, scala-format-flat.html, scala-format-csv.html, scala-format-xml-load.html, scala-format-xml-render.html, sense-xml.html
+scala-security-trait.html, scala-security-disabled.html, scala-security-signature.html, sensedata-with-signature.html

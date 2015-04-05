@@ -1,0 +1,25 @@
+<h3>Data Formats</h3>
+<pre><code class="hljs scala">trait FlatFormatTrait extends FormatTrait {
+
+  /**
+   * overridden in subclasses to render a flat row
+   */
+  protected def renderRow(row :List[String]) : String = "Warning Unimplemented"
+    
+  protected def renderHeader(row : List[String]) : String = renderRow(row)
+  
+  def renderModels(model : List[ModelTrait]) : String = {
+
+    var ret = new StringBuilder()
+    
+    if(model.length > 0) {
+      model.head match {
+        case x:DataModel => {
+          ret.append( renderRow( List("TimeStamp","TimeZone","RelayID","SensorID","SensorType","Units","Data") ))
+          for( m <- model) {
+	          for( sen <- m.asInstanceOf[DataModel].sensors) {
+	            ret.append( renderRow( List(x.timestamp,"UTC",x.uniqueId,sen.uniqueId,sen.stype,sen.units,sen.data)))
+	          }            
+          }
+        }
+        ...</code></pre>

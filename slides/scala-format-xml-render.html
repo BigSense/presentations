@@ -1,0 +1,23 @@
+<h3>Data Formats</h3>
+<pre><code class="hljs scala">class AgraDataXMLFormat extends FormatTrait {
+
+  def renderModels(model : List[ModelTrait]) : String = {
+
+    if(model.length > 0) {
+      model.head match {
+        case x:DataModel => {
+		  return <SenseData>{ 
+		      for( pack <- model.asInstanceOf[List[DataModel]]) yield {
+		        <package id={pack.uniqueId} timestamp={pack.timestamp}>
+		        <sensors>{
+		          for( sensor <- pack.sensors) yield {
+		            <sensor id={sensor.uniqueId} type={sensor.stype} units={sensor.units} timestamp={sensor.timestamp}>
+		            <data>{sensor.data}</data></sensor>
+		          }
+		        }</sensors><errors>{ for(error <- pack.errors) yield {
+		          <error>{error}</error>
+		        }}
+                </errors></package>
+		      }
+	      }</SenseData>.toString()	    
+        }...</code></pre>

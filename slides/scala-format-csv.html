@@ -1,0 +1,12 @@
+<h3>Data Formats</h3>
+<pre><code class="hljs scala">class CSVFormat extends FlatFormatTrait {
+
+   protected override def renderRow(row :List[String]) = row.reduceLeft[String] { (a,b) => a + "," + b } + "\n"
+
+}
+
+class TabDelimitedFormat extends FlatFormatTrait {
+
+  protected override def renderRow(row :List[String]) = row.reduceLeft[String] { (a,b) => a + "\t" + b } + "\n"
+  
+}</code></pre>
