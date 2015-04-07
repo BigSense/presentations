@@ -10,4 +10,6 @@ scala-validation-trait.html, scala-validation-example.html
 scala-format-trait.html, scala-format-flat.html, scala-format-csv.html, scala-format-xml-load.html, scala-format-xml-render.html, sense-xml.html
 scala-security-trait.html, scala-security-disabled.html, scala-security-signature.html, sensedata-with-signature.html
 scala-converters-trait.html, scala-converters-units.html, scala-converters-time.html
+scala-spring-actions.md, scala-spring-validators.md, scala-spring-formats.md
 bigsense-server.md, scala-server-trait.md, scala-server-jetty.md, scala-server-tomcat.md, scala-server-tomcat-static.md
+scala-other-components.md
