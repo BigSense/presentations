@@ -1,0 +1,19 @@
+<h3>Conversions</h3>
+<pre><code class="hljs scala">class TimezoneConverter extends ConverterTrait {
+
+	def convertRow(row : scala.collection.mutable.Map[String,Any],arg: String) = {
+	  
+	  	val zone = row("timezone").toString()
+	  	val time = row("time").toString()
+	
+	  	val  df1 : DateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+		df1.setTimeZone(TimeZone.getTimeZone(zone))
+		val dt : Date = df1.parse(time)
+		val  df2 : DateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+	  	df2.setTimeZone(TimeZone.getTimeZone(arg))
+	  	
+	  	row("timezone") = arg
+	  	row("time") = df2.format(dt)	  
+	}
+}
+</code></pre>

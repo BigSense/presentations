@@ -1,0 +1,23 @@
+<h3>Conversions</h3>
+<pre><code class="hljs scala">class UnitsConverter extends ConverterTrait {
+
+  private def convert(units : String, data : String, direction : String) : (String,String) = {
+    
+    var retdata : String = units
+    var retunits : String = data
+    
+    direction match {
+      case "Standard" => {    
+	    units.toLowerCase() match {
+		    case "c" => {
+		    	//Multiply by 9, then divide by 5, then add 32
+		    	retdata = (((data.toFloat * 9) / 5) + 32).toString()
+		    	retunits = "F"
+		    }
+		    case "mm" => {
+		      retunits = "in"
+		      retdata  = (data.toFloat / 25.4).toString()
+		    }
+		    case "mm/s" => {
+		      retunits = "in/s"}
+		      ...</code></pre>
