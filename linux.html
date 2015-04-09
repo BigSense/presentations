@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>BigSense.io</title>
+
+    <meta name="description" content="Presentation for BigSense.io">
+    <meta name="author" content="Sumit Khanna">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/serif.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+<section><h1>Sensor Networks on Linux</h1>
+<h3>An introduction to BigSense/LtSense</h3>
+<p>
+  <small><a href="http://penguindreams.org">Sumit Khanna</a> / <a href="http://twitter.com/djsumdog">@djsumdog</a></small>
+</p></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense.io
+
+- Cincinnati, Ohio
+- Andrew Rettig
+- Embedded Linux Systems
+- Gather environmental sensor data
+  - Weather
+  - Rain Fall
+  - Temperature
+  - Barometer
+
+  </script>
+</section>
+
+<section><section>
+  <h2>Original Purpose</h2>
+  <p>Combined Sewer Systems</p>
+  <video>
+    <source src="videos/CSO_5.webm" type="video/webm" />
+    <source src="videos/CSO_5.mp4"  type="video/mp4" />
+  </video>
+</section>
+<section>
+  <h2>Original Purpose</h2>
+  <p>Combined Sewer Systems</p>
+  <video>
+    <source src="videos/CSO_5part2.webm" type="video/webm" />
+    <source src="videos/CSO_5part2.mp4"  type="video/mp4" />
+  </video>
+</section></section>
+
+<section><section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-level.jpg" alt="Green Learning Station Pavement Test Area" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-top.png" alt="Green Learning Station Pavement Test Area (Top View)" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-side.jpg" alt="Green Learning Station Pavement Test Area (Side View)" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GreenLearningStationMap.png" alt="Green Learning Station Map" />
+</section></section>
+
+<section><h2>Methodology</h2>
+<img src="images/GLS-sitespec.jpg" alt="Site Specifications" /></section>
+
+<section><h2>Linksys Running OpenWRT</h2>
+<img src="images/el2100.jpg" alt="Linksys Router Running OpenWRT" /></section>
+
+<section><h2>Sensor Relays</h2>
+<img src="images/routers.jpg" alt="Sensor Relay Cabinet" /></section>
+
+<section><h2>GPS</h2>
+<img src="images/sensor_gps.png" alt="Sensor GPS Locations" /></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Data Flow
+
+![Data Flow Diagram](images/DataFlowDiagram.png)
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Technology Stack
+
+- BigSense Web service written in Scala
+  - embedded Tomcat/Jetty
+- LtSense Client written in Python
+  - Queue system for unreliable networks
+  - Multi-format support (XML)
+  - Support for 1-Wire sensors via One Wire File System (OWFS)
+- Originally packaged for OpenWRT
+- Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
+  </script>
+</section>
+<section>
+<section data-markdown>
+  <script type="text/template">
+  ## vSense
+
+vSense provisioning system (written in ruby)
+
+```
+./vsense
+Usage: vsense [ create | list | genkeys | destroy | start | stop | status | secure ]
+
+	 create  - creates a new environment
+	 list    - list of all environments
+	 genkeys - generate PGP keys for a build environment
+	 destroy - stop and delete all files associated with an environment
+	 start   - start an environment
+	 stop    - stop an environment
+	 status  - display the status of an environment
+	 secure  - configures production level security for all environments
+
+add -h or --help for additional argumnets for each command
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## vSense
+
+```
+./vsense create
+Usage: vsense create [-f <fixture>] [-e <env_type>] [-b <build_env>] [-d <db>] [-o <os>] [-s <stage>] <environment name>
+    -f, --fixtures FIXTURE           Install fixtures (gls)
+    -e, --env ENVIRONMENT            Environment type (build|run|infrastructure) [default: run]
+    -d, --database DATABASE          Database backend (mysql|postgres|mssql)
+    -o, --os RUN_OS                  Runtime OS/distribution (ubuntu|debian|centos|opensuse) [default: ubuntu]
+    -s, --stage STAGE                Stage (nightly|testing|stable) [default: stable]
+    -b, --build BUILD                Use a local build environment [default: use official bigsense.io]
+    -h, --help                       Show this message
+
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## vSense
+
+```
+./vsense secure
+Usage: vsense secure [-s <key_file> ] [-p <gpg key id> [-f]]
+    -s, --ssh KEY                    SSH identity for vagrant user in all new VMs
+    -p, --pgp ID                     ID of PGP key to use for password encryption
+    -f, --force                      Overwrite existing PGP ID in /home/sumit/.password-store/.gpg-id
+    -h, --help                       Show this message
+```
+  </script>
+</section>
+</section>
+<section data-markdown>
+  <script type="text/template">
+  ## vSense
+
+- Vagrant + Ansible
+- VirtualBox (development)
+- libvirt + kvm (production)
+- security
+  - SSH keys
+  - Password scrambling
+  </script>
+</section>
+<section>
+<section><h2>BigSense Web Service API</h2>
+<img src="images/bigsense_api.png" alt="BigSense API Chart" /></section>
+
+<section><h2>Example Query</h2>
+<img src="images/example-query.png" alt="Example Query" /></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## LtSense
+```
+2015-03-16 03:28:56,256 DEBUG    Generated XML
+<?xml version="1.0" ?>
+<AgraData>
+	<package id="VagrantRelay01" timestamp="1426476536256">
+		<sensors>
+			<sensor id="VRTEMP01" type="Temperature" units="C">
+				<data>10</data>
+			</sensor>
+			<sensor id="VRTEMP02" type="Temperature" units="C">
+				<data>5</data>
+			</sensor>
+		</sensors>
+	</package>
+</AgraData>
+
+2015-03-16 03:29:05,877 DEBUG    Preparing payload for transport to http://10.11.34.20:8080/Sensor.agra.xml
+2015-03-16 03:29:05,887 ERROR    HTTP Error 403
+2015-03-16 03:29:05,888 WARNING  Error delivering payload. Requeueing (Queue Size:18176). Retry in 10.0
+```
+  </script>
+</section>
+</section>
+<section data-markdown>
+  <script type="text/template">
+  ## The Future
+
+- Support More Sensors (1-wire, I2C, Beagle Board ADC)
+- Database optimizations
+- GPS Support / Geospatial API
+- Lots more!
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### http://bigsense.io
+  </script>
+</section>
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>

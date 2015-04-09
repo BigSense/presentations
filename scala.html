@@ -1,0 +1,907 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>BigSense.io</title>
+
+    <meta name="description" content="Presentation for BigSense.io">
+    <meta name="author" content="Sumit Khanna">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/serif.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+<section><h1>BigSense</h1>
+<h3>Building a Web Service Framework<br />in Scala<br />for Sensor Networks</h3>
+<p>
+  <small><a href="http://penguindreams.org">Sumit Khanna</a> / <a href="http://twitter.com/djsumdog">@djsumdog</a></small>
+</p></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense.io
+
+- Cincinnati, Ohio
+- Andrew Rettig
+- Embedded Linux Systems
+- Gather environmental sensor data
+  - Weather
+  - Rain Fall
+  - Temperature
+  - Barometer
+
+  </script>
+</section>
+
+<section><section>
+  <h2>Original Purpose</h2>
+  <p>Combined Sewer Systems</p>
+  <video>
+    <source src="videos/CSO_5.webm" type="video/webm" />
+    <source src="videos/CSO_5.mp4"  type="video/mp4" />
+  </video>
+</section>
+<section>
+  <h2>Original Purpose</h2>
+  <p>Combined Sewer Systems</p>
+  <video>
+    <source src="videos/CSO_5part2.webm" type="video/webm" />
+    <source src="videos/CSO_5part2.mp4"  type="video/mp4" />
+  </video>
+</section></section>
+
+<section><section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-level.jpg" alt="Green Learning Station Pavement Test Area" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-top.png" alt="Green Learning Station Pavement Test Area (Top View)" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-side.jpg" alt="Green Learning Station Pavement Test Area (Side View)" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GreenLearningStationMap.png" alt="Green Learning Station Map" />
+</section></section>
+
+<section><h2>Methodology</h2>
+<img src="images/GLS-sitespec.jpg" alt="Site Specifications" /></section>
+
+<section><h2>Linksys Running OpenWRT</h2>
+<img src="images/el2100.jpg" alt="Linksys Router Running OpenWRT" /></section>
+
+<section><h2>Sensor Relays</h2>
+<img src="images/routers.jpg" alt="Sensor Relay Cabinet" /></section>
+
+<section><h2>GPS</h2>
+<img src="images/sensor_gps.png" alt="Sensor GPS Locations" /></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Data Flow
+
+![Data Flow Diagram](images/DataFlowDiagram.png)
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Technology Stack
+
+- BigSense Web service written in Scala
+  - embedded Tomcat/Jetty
+- LtSense Client written in Python
+  - Queue system for unreliable networks
+  - Multi-format support (XML)
+  - Support for 1-Wire sensors via One Wire File System (OWFS)
+- Originally packaged for OpenWRT
+- Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Examining the Framework
+
+* Java Web / REST Frameworks
+* Review of Servlets
+* Big Sense – Custom Scala Framework
+  </script>
+</section>
+
+<section><h2>Web Frameworks</h2>
+<img src="images/java-web-frameworks/jsf.png" alt="Java Server Faces" />
+<img src="images/java-web-frameworks/axis.jpg" alt="AXIS" />
+<img src="images/java-web-frameworks/play.png" alt="Play" width="200px"/>
+<img src="images/java-web-frameworks/rest-easy.png" alt="RestEasy" />
+<img src="images/java-web-frameworks/struts.gif" alt="Apache Struts" /></section>
+<section>
+<section><h2>RestEasy Post Example</h2>
+
+<pre><code class="hljs java">@POST
+@Path("/{model}")
+public Response post(@PathParam("model") String model,
+                     @FormParam("xml") String xml,
+                     @Context HttpservletResponse response,
+                     @Context UriInfo uri) {
+    ServiceRequest req = new ServiceRequest();
+    req.setModel(model);
+    req.setAction("add");
+    req.setXml(xml);
+    req.setResponse(response);
+    req.setUri(uri);
+
+    return getServiceAction("add").invokeService(req)
+}
+</code></pre></section>
+
+<section><h2>RestEasy Delete Example</h2>
+
+<pre><code class="hljs java">@DELETE
+@Path("/{model}/{identifier}")
+public Response post(@PathParam("model") String model,
+                     @PathParam("identifier") String id,
+                     @Context HttpservletResponse response,
+                     @Context UriInfo uri) {
+    ServiceRequest req = new ServiceRequest();
+    req.setModel(model);
+    req.setAction("delete");
+    req.setIdentifier(id);
+    req.setResponse(response);
+    req.setUri(uri);
+
+    return getServiceAction("delete").invokeService(req)
+}
+</code></pre></section>
+
+<section><h2>RestEasy Get Example</h2>
+
+<pre><code class="hljs java">@GET
+@Path("/userEntitlements/{sso}")
+public Response getUserEntitlement(@PathParam("sso") String sso) {
+    
+    ServiceRequest req = new ServiceRequest();
+    req.setAction("userEntitlements");
+    req.setIdentifier(sso);
+
+    return getServiceAction("userEntitlements").invokeService(req);
+}
+</code></pre></section>
+</section><section>
+<section><h2>Servlets</h2>
+<img src="images/java-api/servlets.png" alt="Servlet API" /></section>
+
+<section><h3>CSC 201</h3>
+<pre><code class="hljs java">public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+{
+	response.setContentType("text/html"); //all output is HTML
+	PrintWriter out = response.getWriter(); //all output is done through this
+
+	if(request.getParameter("new") == null && request.getSession(false) == null) //start a new session?
+	{
+	  HTMLOut.writeHeader(out);
+	  HTMLOut.writeMenu(out, NO_SESSION);
+	  HTMLOut.writeBodyNewSession(out);
+	  HTMLOut.writeFooter(out);
+	}
+	else if(request.getParameter("new") != null && request.getParameter("new").equals("true")) //answered yes
+	{
+</code></pre></section>
+
+<section><h2>Servlets - Core</h2>
+<img src="images/java-api/servlets-core.png" alt="Servlet API" /></section>
+
+<section><h3>service()</h3>
+<pre><code class="hljs java">protected void service(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException
+    {
+        String method = req.getMethod();
+
+        if (method.equals(METHOD_GET)) {
+            long lastModified = getLastModified(req);
+            if (lastModified == -1) {
+                // servlet doesn't support if-modified-since, no reason
+                // to go through further expensive logic
+                doGet(req, resp);
+            } else {
+                long ifModifiedSince = req.getDateHeader(HEADER_IFMODSINCE);
+                if (ifModifiedSince < lastModified) {
+                    // If the servlet mod time is later, call doGet()
+                    // Round down to the nearest second for a proper compare
+                    // A ifModifiedSince of -1 will always be less
+                    maybeSetLastModified(resp, lastModified);
+                    doGet(req, resp);
+                } else {
+                    resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                }
+            }
+
+        } else if (method.equals(METHOD_HEAD)) {
+            long lastModified = getLastModified(req);
+            maybeSetLastModified(resp, lastModified);
+            doHead(req, resp);
+
+        } else if (method.equals(METHOD_POST)) {
+            doPost(req, resp);
+            
+        } else if (method.equals(METHOD_PUT)) {
+            doPut(req, resp);
+        ...</code></pre></section>
+</section>
+<section data-markdown>
+  <script type="text/template">
+  ### Building a Custom Scala REST Web Service Framework
+
+- Components
+  - Actions
+  - Validators
+  - Formats
+  - Security 
+  - Converters
+  - MasterServlet 
+    - Bootstrap
+    - Tomcat/Jetty
+
+  </script>
+</section>
+<section>
+<section><h3>Actions</h3>
+<pre><code class="hljs scala">class ActionRequest {
+
+  var method: String = "INVALID"
+  var args : Array[String] = Array()
+  var parameters : Map[String,Array[Any]] = Map()
+  var models : List[DataModel] = List()
+  var data : String = _
+  var format : FormatTrait = _
+  var signature : Option[String] = None
+
+  override def toString() : String = {
+    val out : StringBuilder = new StringBuilder("Action Request:\n")
+    out.append("\tMethod: %s\n".format(method))
+    ...
+</code></pre></section>
+
+<section><h3>Actions</h3>
+<pre><code class="hljs scala">class Response (
+  val status : Int = HttpServletResponse.SC_OK,
+  val contentType : Option[String] = None,
+  val newLocations : List[Int] = List()
+)
+
+class BinaryResponse(val output : Array[Byte],
+                     status : Int = HttpServletResponse.SC_OK,
+                     contentType : Option[String] = Some("application/octet-stream"),
+                     newLocations: List[Int] = List())
+  extends Response(status,contentType,newLocations)
+
+class StringResponse(val output : String,
+                     status : Int = HttpServletResponse.SC_OK,
+                     contentType : Option[String] = Some("text/plain"),
+                     newLocations: List[Int] = List())
+  extends Response(status,contentType,newLocations)
+
+class ViewResponse(val view : Html,
+                   status : Int = HttpServletResponse.SC_OK,
+                   contentType : Option[String] = Some("text/html"),
+                   newLocations: List[Int] = List())
+  extends Response(status,contentType,newLocations)
+</code></pre></section>
+
+<section><h3>Actions</h3>
+<pre><code class="hljs scala">import scala.reflect.BeanProperty
+import io.bigsense.db.ServiceDataHandlerTrait
+import io.bigsense.validation.ValidatorTrait
+
+trait ActionTrait  {
+
+    @BeanProperty var dbHandler : ServiceDataHandlerTrait = _
+
+    @BeanProperty var validator : ValidatorTrait = _
+  
+    def runAction(aReq : ActionRequest) : Response
+    
+}</code></pre></section>
+
+<section><h3>Actions</h3>
+<pre><code class="hljs scala">class QueryAction extends ActionTrait {
+
+  def runAction(aReq: ActionRequest): Response = {
+
+    aReq.method match {
+      case "GET" => {
+        aReq.args(1) match {
+          case "Latest" => {
+            val limit: Int = aReq.args(2).toInt
+            new StringResponse(aReq.format.renderModels(dbHandler.retrieveLatestSensorData(limit, aReq.parameters)))
+          }
+          case "TimestampRange" => {
+            val start = TimeHelper.timestampToDate(aReq.args(2))
+            val end = TimeHelper.timestampToDate(aReq.args(3))
+            new StringResponse(aReq.format.renderModels(dbHandler.retrieveDateRange(start, end, aReq.parameters)))
+          }
+          case "DateRange" => {
+            ...
+</code></pre></section>
+</section><section>
+<section><h3>Validation</h3>
+<pre><code class="hljs scala">trait ValidatorTrait {
+
+  val BAD_REQUEST = HttpServletResponse.SC_BAD_REQUEST
+  val NOT_IMPLEMENTED = HttpServletResponse.SC_NOT_IMPLEMENTED
+  val METHOD_NOT_ALLOWED = HttpServletResponse.SC_METHOD_NOT_ALLOWED
+  
+  protected def checkInt(obj : Any) : Boolean = {...}
+
+  protected def checkLong(obj : Any) : Boolean = {...}
+
+  protected def checkDate(obj : String) : Boolean = {...}
+  
+  def validateRequest(req : ActionRequest) : Option[ValidationError]
+  
+}</code></pre></section>
+
+<section><h3>Validation</h3>
+<pre><code class="hljs scala">class QueryActionValidator extends ValidatorTrait {
+
+  def validateRequest(aReq: ActionRequest): Option[ValidationError] = {
+
+    aReq.method match {
+      case "GET" => {
+        if (aReq.args.length >= 2) {
+          aReq.args(1) match {
+            case "Latest" => {
+              if (aReq.args.length != 3) {
+                return Some(new ValidationError("Latest Requires a Limit Argument", BAD_REQUEST))
+              }
+              else if (!checkInt(aReq.args(2))) {
+                return Some(new ValidationError("Limit Argument Must be an Integer", BAD_REQUEST))
+              }
+            }
+            case "TimestampRange" => {
+              if (aReq.args.length != 4)
+              ...
+</code></pre></section>
+</section><section>
+<section data-markdown>
+  <script type="text/template">
+  ### Data Formats
+
+- Tab Delimited 
+- Comma Separated
+- Sense XML
+- Flat XML
+- Sortable HTML Table
+  </script>
+</section>
+
+<section><h3>Data Formats</h3>
+<pre><code class="hljs scala">package io.bigsense.format
+import io.bigsense.model.ModelTrait
+
+trait FormatTrait {
+
+  def renderModels(model : List[ModelTrait]) : String
+  def loadModels(data: String) : List[ModelTrait]
+  
+}</code></pre></section>
+
+<section><h3>Data Formats</h3>
+<pre><code class="hljs scala">trait FlatFormatTrait extends FormatTrait {
+
+  /**
+   * overridden in subclasses to render a flat row
+   */
+  protected def renderRow(row :List[String]) : String = "Warning Unimplemented"
+    
+  protected def renderHeader(row : List[String]) : String = renderRow(row)
+  
+  def renderModels(model : List[ModelTrait]) : String = {
+
+    var ret = new StringBuilder()
+    
+    if(model.length > 0) {
+      model.head match {
+        case x:DataModel => {
+          ret.append( renderRow( List("TimeStamp","TimeZone","RelayID","SensorID","SensorType","Units","Data") ))
+          for( m <- model) {
+	          for( sen <- m.asInstanceOf[DataModel].sensors) {
+	            ret.append( renderRow( List(x.timestamp,"UTC",x.uniqueId,sen.uniqueId,sen.stype,sen.units,sen.data)))
+	          }            
+          }
+        }
+        ...</code></pre></section>
+
+<section><h3>Data Formats</h3>
+<pre><code class="hljs scala">class CSVFormat extends FlatFormatTrait {
+
+   protected override def renderRow(row :List[String]) = row.reduceLeft[String] { (a,b) => a + "," + b } + "\n"
+
+}
+
+class TabDelimitedFormat extends FlatFormatTrait {
+
+  protected override def renderRow(row :List[String]) = row.reduceLeft[String] { (a,b) => a + "\t" + b } + "\n"
+  
+}</code></pre></section>
+
+<section><h3>Data Formats</h3>
+<pre><code class="hljs scala">def loadModels(data : String) : List[ModelTrait] = { 
+    
+    val xml : Elem = XML.loadString(data)
+        
+    var models = new ListBuffer[DataModel]
+    
+    for( pack <- xml \\ "package") yield {
+        
+    	var model = new DataModel()
+        
+	    val sensors = pack \ "sensors"
+	    val errors = pack \ "errors"
+	    model.timestamp = (pack \"@timestamp").text.trim()
+	    model.uniqueId = (pack \"@id"  ).text.trim()
+	       	    
+	    var sbList = new ListBuffer[SensorModel]()
+	    
+	    for( node <- sensors \"sensor") yield {
+	      var sensorData = new SensorModel()
+	      sensorData.uniqueId = (node\"@id").text.trim()...</code></pre></section>
+
+<section><h3>Data Formats</h3>
+<pre><code class="hljs scala">class AgraDataXMLFormat extends FormatTrait {
+
+  def renderModels(model : List[ModelTrait]) : String = {
+
+    if(model.length > 0) {
+      model.head match {
+        case x:DataModel => {
+		  return <SenseData>{ 
+		      for( pack <- model.asInstanceOf[List[DataModel]]) yield {
+		        <package id={pack.uniqueId} timestamp={pack.timestamp}>
+		        <sensors>{
+		          for( sensor <- pack.sensors) yield {
+		            <sensor id={sensor.uniqueId} type={sensor.stype} units={sensor.units} timestamp={sensor.timestamp}>
+		            <data>{sensor.data}</data></sensor>
+		          }
+		        }</sensors><errors>{ for(error <- pack.errors) yield {
+		          <error>{error}</error>
+		        }}
+                </errors></package>
+		      }
+	      }</SenseData>.toString()	    
+        }...</code></pre></section>
+
+<section><h3>Sense XML</h3>
+<pre><code class="hljs xml"><?xml version="1.0"?>
+<SenseData>
+    <package id="OneWireTester" timestamp="1428192392795">
+        <sensors>
+            <sensor id="AGEWA99B" timestamp="1428192392795" type=" Temperature" units="C">
+                <data>34</data>
+            </sensor>
+            <sensor id="WTR001AD-V" timestamp=" 1428192392795" type="Volume" units="ml">
+                <data>50</data>
+            </sensor>
+            <sensor id="WTR001AD-FR" timestamp="1428192392795" type="FlowRate" units="ml/s">
+            <data>2.45</data>
+        </sensor>
+    </sensors>
+</package>
+</SenseData></code></pre></section>
+</section><section>
+<section><h3>Security</h3>
+<pre><code class="hljs scala">trait SecurityManagerTrait {
+
+  def securityFilter(request : ActionRequest) : Boolean
+  @BeanProperty var dbHandler : ServiceDataHandlerTrait = _
+}</code></pre></section>
+
+<section><h3>Security</h3>
+<pre><code class="hljs scala">class DisabledSecurityManager extends SecurityManagerTrait {
+
+  def securityFilter(request: ActionRequest): Boolean = { true }
+
+}</code></pre></section>
+
+<section><h3>Security</h3>
+<pre><code class="hljs scala">class SignatureSecurityManageer extends SecurityManagerTrait {
+
+    def loadPublicKey(relayId : String) : PublicKey = {...}
+      
+    def securityFilter(req : ActionRequest) : Boolean = {
+      
+      if( req.method.equals("POST") ) {
+        if(req.models.length != 1) {
+          throw new SecurityManagerException("Only single model POST requests are supported with signature verificaiton")
+        }
+        if(!req.models(0).isInstanceOf[DataModel]) {
+          throw new SecurityManagerException("Only data models are supported for verification")
+        }
+        
+        val sg = Signature.getInstance("SHA1withRSA");
+        sg.initVerify(loadPublicKey(req.models(0).uniqueId))
+
+        req.signature match {
+          case None => throw new SecurityManagerException("No Signature Found")
+          case Some(sig : String) => {
+            sg.update(req.data.trim().getBytes())
+            return sg.verify(DatatypeConverter.parseBase64Binary(sig))
+          }
+        }
+
+       }
+      //no security for GET/queries yet
+      true
+    }
+}</code></pre></section>
+
+<section><h3>RSA Signature Verification</h3>
+<pre><code class="hljs xml"><?xml version="1.0" ?><SenseData><package id="OneWireTester" 
+timestamp="1428192392795"><sensors><sensor id="AGEWA99B" timestamp="1428192392795" type="
+Temperature" units="C"><data>34</data></sensor><sensor id="WTR001AD-V" timestamp="
+1428192392795" type="Volume" units="ml"><data>50</data></sensor><sensor id="WTR001AD-FR" 
+timestamp="1428192392795" type="FlowRate" units="ml/s"><data>2.45</data></sensor>
+</sensors></package></SenseData>
+
+dEBTFiYyaf4JanI6rRndufYsplmP0mHp3m+87sVYu5gOMRoBg5OQ5s4rOKT6/q3AwuP4lBtqsYNcNpaQgD5T/
+NUZB3O+WcFElIs1wB03ZBJSFBEfv/H5/cF4CjPfr61zDLkQBhwkgTjhiHecYsj7C1hiz/
+NfQ8NaU6IXMpyT95GpWqHdGJJxQLL7ron8E2IXE4t6Z4f3hILq1miKYA2CfNBdmfMq3MFY/Eqngr5zcecdAZe3y5lZvD2
+ZTGW0wnNS9bp84XDOo579SwwnNbEZ6GzQKzJtePM3LysquivN7lKf7FFUVBcc4qSe+hu8O5LXxJWv9IRciswzKMLYe7K+
+lg==</code></pre></section>
+</section><section>
+<section><h3>Conversions</h3>
+<pre><code class="hljs scala">package io.bigsense.conversion
+import io.bigsense.model.ModelTrait
+
+trait ConverterTrait {
+
+  def convertRow(row : scala.collection.mutable.Map[String,Any],arg: String) 
+  
+}</code></pre></section>
+
+<section><h3>Conversions</h3>
+<pre><code class="hljs scala">class UnitsConverter extends ConverterTrait {
+
+  private def convert(units : String, data : String, direction : String) : (String,String) = {
+    
+    var retdata : String = units
+    var retunits : String = data
+    
+    direction match {
+      case "Standard" => {    
+	    units.toLowerCase() match {
+		    case "c" => {
+		    	//Multiply by 9, then divide by 5, then add 32
+		    	retdata = (((data.toFloat * 9) / 5) + 32).toString()
+		    	retunits = "F"
+		    }
+		    case "mm" => {
+		      retunits = "in"
+		      retdata  = (data.toFloat / 25.4).toString()
+		    }
+		    case "mm/s" => {
+		      retunits = "in/s"}
+		      ...</code></pre></section>
+
+<section><h3>Conversions</h3>
+<pre><code class="hljs scala">class TimezoneConverter extends ConverterTrait {
+
+	def convertRow(row : scala.collection.mutable.Map[String,Any],arg: String) = {
+	  
+	  	val zone = row("timezone").toString()
+	  	val time = row("time").toString()
+	
+	  	val  df1 : DateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+		df1.setTimeZone(TimeZone.getTimeZone(zone))
+		val dt : Date = df1.parse(time)
+		val  df2 : DateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+	  	df2.setTimeZone(TimeZone.getTimeZone(arg))
+	  	
+	  	row("timezone") = arg
+	  	row("time") = df2.format(dt)	  
+	}
+}
+</code></pre></section>
+</section><section>
+<section data-markdown>
+  <script type="text/template">
+      ## Spring Glue (Actions)
+
+    <!-- Actions -->
+
+	<bean id="BaseAction" name="BaseAction" class="io.bigsense.action.ActionTrait" abstract="true">
+		<property name="dbHandler" ref="serviceDataHandler" />
+	</bean>
+
+	<bean id="ActionSensor" name="ActionSensor" class="io.bigsense.action.SensorAction" parent="BaseAction">
+		<property name="validator" ref="SensorActionValidator" />	
+	</bean>
+	
+	<bean id="ActionQuery" name="ActionQuery" class="io.bigsense.action.QueryAction" parent="BaseAction">
+		<property name="validator" ref="QueryActionValidator" />
+	</bean>
+	
+	<bean id="ActionStatus" name="ActionStatus" class="io.bigsense.action.StatusAction" parent="BaseAction">
+		<property name="validator" ref="StatusActionValidator" />
+	</bean>
+
+	<bean id="ActionAggregate" name="ActionAggregate" class="io.bigsense.action.AggregateAction" parent="BaseAction">
+		<property name="validator" ref="AggregateActionValidator" />
+	</bean>
+	
+	<bean id="ActionImage" name="ActionImage" class="io.bigsense.action.ImageAction" parent="BaseAction">
+		<property name="validator" ref="ImageActionValidator" />
+
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+      ## Spring Glue (Validators)
+
+	<!--  Validators -->
+	
+	<bean id="QueryActionValidator" name="QueryActionValidator" class="io.bigsense.validation.QueryActionValidator" />
+	<bean id="AggregateActionValidator" name="AggregateActionValidator" class="io.bigsense.validation.AggregateActionValidator" />
+	<bean id="SensorActionValidator" name="SensorActionValidator" class="io.bigsense.validation.SensorActionValidator" />
+	<bean id="StatusActionValidator" name="StatusActionValidator" class="io.bigsense.validation.StatusActionValidator"/>
+	<bean id="ImageActionValidator" name="ImageActionValidator" class="io.bigsense.validation.ImageActionValidator"/>
+
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+      ## Spring Glue (Formats)
+
+	<!-- Formats -->
+	
+	<bean id="FormatAGRA.XML" class="io.bigsense.format.AgraDataXMLFormat" />
+	<bean id="FormatTXT" class="io.bigsense.format.TabDelimitedFormat" />
+	<bean id="FormatCSV" class="io.bigsense.format.CSVFormat" />
+	<bean id="FormatFLAT.XML" class="io.bigsense.format.FlatXMLFormat" />
+	<bean id="FormatTABLE.HTML" class="io.bigsense.format.TableHTMLFormat" />
+  </script>
+</section>
+</section><section>
+<section data-markdown>
+  <script type="text/template">
+  ## Web Applications
+- Traditional Tomcat/WAR deployment
+- Embedded Jetty
+- Embedded Tomcat
+
+```
+try {
+    config.options("server") match {
+      case "tomcat" => new TomcatServer().startServer()
+      case "jetty" => new JettyServer().startServer()
+      case _ => {
+        log.fatal("Unknown server type: %s. (Was expecting tomcat or jetty)")
+        System.exit(4)
+      }
+    }
+  }
+ ```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Server 
+
+```
+trait ServerTrait {
+
+  lazy val httpPort = BigSenseServer.config.options("httpPort").toInt
+
+  def startServer()
+  def stopServer()
+
+}
+ ```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Jetty Server
+
+```
+class JettyServer extends ServerTrait {
+
+  val server = new Server()
+  val connector = new ServerConnector(server)
+  connector.setPort(httpPort)
+  server.setConnectors(Array(connector))
+
+  val context = new ServletContextHandler()
+  context.setContextPath(BigSenseServer.webRoot)
+  context.addServlet(new MasterServlet().getClass, "/*")
+  context.addEventListener(new DBUpdateListener())
+
+  val fileContext = new WebAppContext()
+  fileContext.setContextPath(BigSenseServer.contentRoot)
+  fileContext.setResourceBase(BigSenseServer.getClass.getResource("/io/bigsense/web").toExternalForm)
+
+  val handlers = new HandlerCollection()
+  handlers.setHandlers(Array( fileContext, context, new DefaultHandler()))
+  server.setHandler(handlers)
+  ...
+ ```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Tomcat Server
+
+```
+class TomcatServer extends ServerTrait {
+
+  val tomcat = new Tomcat()
+  tomcat.setPort(httpPort)
+  val tmp = new File(System.getProperty("java.io.tmpdir"))
+
+  val ctx = tomcat.addContext(BigSenseServer.webRoot,tmp.getAbsolutePath)
+  Tomcat.addServlet(ctx,"bigsense",new MasterServlet())
+  ctx.addServletMapping("/*","bigsense")
+
+  new DBUpdateListener().contextInitialized(null)
+
+  val cCtx = tomcat.addContext(BigSenseServer.contentRoot,tmp.getAbsolutePath)
+  Tomcat.addServlet(cCtx,"static",new StaticContentServlet)
+  cCtx.addServletMapping("/*","static")
+  ...
+ ```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Tomcat Server (Static Content Servlet)
+
+```
+class StaticContentServlet extends HttpServlet {
+
+  override def doGet(req : HttpServletRequest, resp : HttpServletResponse) {
+
+    val resourcePath = "/io/bigsense/web/%s".format(req.getPathInfo.stripPrefix("/"))
+
+    val resource = getClass.getResource(resourcePath)
+
+    if(resource == null) {
+      resp.setContentType("text/plain")
+      resp.setStatus(HttpServletResponse.SC_NOT_FOUND)
+      resp.getWriter.write("Not Found")
+      resp.getWriter.close
+    }
+    else {
+      resp.setContentType( getContentType(req.getPathInfo) )
+      ByteStreams.copy(getClass.getResourceAsStream(resourcePath), resp.getOutputStream)
+      resp.getOutputStream.close
+    }
+  }
+  ...
+ ```
+  </script>
+</section>
+</section>
+<section data-markdown>
+  <script type="text/template">
+  ## Other components
+
+- Bootstrap Servlet
+- Configuration
+- Database Components
+  - db/dbo user
+  - mysql, pgsql, mssql support
+- sbt-native-packager
+  - systemv, upstart, systemd
+  - deb/rpm
+
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Configuration File
+
+```dbms=pgsql
+dbHostname=db1.dev.bigsense.io
+dbDatabase=bigsense
+dbPort=5432
+dbUser=db_bigsense
+dbPass=bigsense
+dboUser=db_bigsense_ddl
+dboPass=bigsenseDDL
+securityManager=SignatureSecurityManager
+httpPort=8282
+server=tomcat
+```
+
+    /usr/bin/bigsense --ddl > initial.sql
+  </script>
+</section>
+<section>
+<section><h2>BigSense Web Service API</h2>
+<img src="images/bigsense_api.png" alt="BigSense API Chart" /></section>
+
+<section><h2>Example Query</h2>
+<img src="images/example-query.png" alt="Example Query" /></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### Example Aggregate Query
+
+    http://bigsense:8080/aggregate/SumVolume/DateRange/20120501/20120510/1440.table.html?Timezone=EST5EDT&Units=Standard
+
+![Aggregate Query Result in HTML Table Format](images/bigsense-example-aggregate.png)
+  </script>
+</section>
+</section>      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
