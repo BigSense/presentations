@@ -15,3 +15,4 @@ bigsense-server.md, scala-server-trait.md, scala-server-jetty.md, scala-server-t
 scala-other-components.md
 bigsense-config.md
 bigsense-rest-api.html, bigsense-example-query.html, bigsense-example-aggregate.md
+source-code.md
