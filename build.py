@@ -44,7 +44,7 @@ def slide_file(fd):
 
 if __name__ == '__main__':
 
-  if len(sys.argv) > 0 and sys.argv[1] == 'clean':
+  if len(sys.argv) > 1 and sys.argv[1] == 'clean':
     print('todo implement')
     exit(0)
 
@@ -52,13 +52,23 @@ if __name__ == '__main__':
   top = open('template/head.html', 'r').read()
   bottom = open('template/tail.html', 'r').read()
 
-  for presentation in slide_files:
-    print('Processing {}'.format(presentation))
-    with open(presentation,'r') as fd:
-      with open('{}.html'.format(presentation.split('.')[0]), 'w') as out:
-        out.write(top)
-        out.write(slide_file(fd))
-        out.write(bottom)
+  with open('index.html','w') as index:
+    with open('template/index-head.html', 'r') as itop:
+      index.write(itop.read())
+    with open('template/index-tail.html', 'r') as ibottom:
+      index.write(ibottom.read())
+
+    for presentation in slide_files:
+
+      print('Processing {}'.format(presentation))
+      name = presentation.split('.')[0]
+      index.write('<p><a href="{}.html">{} Slides</a></p>'.format(name,name.title()))
+      
+      with open(presentation,'r') as fd:
+        with open('{}.html'.format(name), 'w') as out:
+          out.write(top)
+          out.write(slide_file(fd))
+          out.write(bottom)
 
 
 
