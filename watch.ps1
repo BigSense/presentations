@@ -12,5 +12,5 @@ while($TRUE){
     continue;
   }
   write-host "Change in " + $result.Name
-  python build.py a
+  python build.py
 } 
