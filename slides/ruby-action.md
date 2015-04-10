@@ -1,0 +1,40 @@
+### The Basic Action
+
+```
+class Action
+
+  BASE    = Pathname.new(File.join(File.dirname(File.expand_path __FILE__),'..')).realpath
+  ENVS    = File.join(BASE,'virtual-env')
+
+  @args = nil
+  @opts = nil
+  @env_dir  = nil
+  @command = nil
+
+  def initialize(args)
+   ...
+  end
+
+  def set_options()
+  end
+
+  def settings()
+    YAML.load_file(File.join(ENVS,@args[0],'environment.yml'))
+  end
+
+  def optparse()
+    if @opts.nil?
+      STDERR.puts "Option Parser for Action is Unimplemented"
+      exit 4
+     ...
+  end
+
+  def validate()
+   ...
+  end
+
+  def run()
+  end
+
+end
+```

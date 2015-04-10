@@ -1,4 +1,4 @@
 # BigSense
-### Using Ruby to build virtual environments for Sensor Network testing
+### Using Ruby to build virtual environments for Sensor Networks
 
-"Sumit Khanna":http://penguindreams.org / "@djsumdog":http://twitter.com/djsumdog
+[Sumit Khanna](http://penguindreams.org "Website") / [@djsumdog](:http://twitter.com/djsumdog "Twitter")
