@@ -2,7 +2,7 @@ title-ruby.md
 cso-gls.set
 vsense-overview.md
 vsense-cmd.md, vsense-create.md, vsense-secure.md
-ruby-action.md
+ruby-action.html, ruby-action-secure.html, ruby-action-create-run.html
 contributing.md
 source-code.md
 questions.md

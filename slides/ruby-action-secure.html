@@ -1,0 +1,33 @@
+<h3>Secure Action Options</h3>
+
+<pre><code class="hljs ruby">class SecureAction < Action
+
+  GPG_ID_FILE = File.join(Dir.home, '.password-store', '.gpg-id')
+
+  def set_options()
+    super
+    @options = {}
+    @opts = OptionParser.new do |opts|
+
+      opts.banner = 'Usage: vsense secure [-s &lt;key_file&gt; ] [-p &lt;gpg key id&gt; [-f]]'
+
+      opts.on('-s', '--ssh KEY', 'SSH identity for vagrant user in all new VMs') do |f|
+        @options[:ssh_key_file] = f
+      end
+
+      opts.on('-p', '--pgp ID', 'ID of PGP key to use for password encryption') do |id|
+        @options[:pgp_id] = id
+      end
+
+      opts.on('-f', '--force', "Overwrite existing PGP ID in #{GPG_ID_FILE}") do |f|
+        @options[:force_pgp] = f
+      end
+
+      opts.on_tail("-h", "--help", "Show this message") do
+        STDERR.puts opts
+        exit
+      end
+
+    end
+  end
+</code></pre>

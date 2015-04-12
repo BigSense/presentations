@@ -1,0 +1,44 @@
+<h3>Secure Action Options</h3>
+
+<pre><code class="hljs ruby">  def run()
+    super
+
+    if File.exists?(@env_dir)
+      STDOUT.puts ('Environment already exists: %s' %[@env_dir]).red
+      exit 2
+    end
+
+    ...
+    
+    else # default is :run
+
+      puts ('Creating Runtime Environment: %s' % @args[0]).green
+
+      # configuration
+
+      for i in env_config['servers'].keys
+        env_config['servers'][i]['hostname'].sub!('%env%',@args[0])
+      end
+
+      if not @options[:fixture].nil?
+        env_config['fixture'] = @options[:fixture].to_s
+      end
+
+      # connected to a build environment?
+
+      if not @options[:build].nil?
+        build_config = YAML.load_file(File.join(ENVS,@options[:build],"environment.yml"))
+        env_config['repository']['host'] = '%s.%s' % [build_config['servers']['repository']['hostname'], build_config['domain']]
+        env_config['repository']['custom'] = true
+        env_config['repository']['ip'] = build_config['servers']['repository']['ip']
+        env_config['repository']['ip_regex'] = '^' + build_config['servers']['repository']['ip'].gsub('.','\.')
+        env_config['repository']['protocol'] = 'http'
+      end
+
+      env_config['database']['type'] = @options[:database].to_s
+      env_config['servers']['bigsense']['os'] = @options[:os].to_s
+      env_config['servers']['ltsense']['os'] = @options[:os].to_s
+      env_config['repository']['stage'] = @options[:stage].to_s
+
+    end
+</code></pre>
