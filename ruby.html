@@ -42,11 +42,14 @@
 
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
-<section><h1>Sensor Networks on Linux</h1>
-<h3>An introduction to BigSense/LtSense</h3>
-<p>
-  <small><a href="http://penguindreams.org">Sumit Khanna</a> / <a href="http://twitter.com/djsumdog">@djsumdog</a></small>
-</p></section>
+<section data-markdown>
+  <script type="text/template">
+  # BigSense
+### Using Ruby to build virtual environments for Sensor Networks
+
+[Sumit Khanna](http://penguindreams.org "Website") / [@djsumdog](:http://twitter.com/djsumdog "Twitter")
+  </script>
+</section>
 
 <section data-markdown>
   <script type="text/template">
@@ -132,6 +135,19 @@
 - Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
   </script>
 </section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## vSense
+
+- Vagrant + Ansible
+- VirtualBox (development)
+- libvirt + kvm (production)
+- security
+  - SSH keys
+  - Password scrambling
+  </script>
+</section>
 <section>
 <section data-markdown>
   <script type="text/template">
@@ -190,68 +206,162 @@ Usage: vsense secure [-s <key_file> ] [-p <gpg key id> [-f]]
 ```
   </script>
 </section>
+</section><section>
+<section><h3>The Basic Action</h3>
+
+<pre><code class="hljs ruby">class Action
+
+  BASE    = Pathname.new(File.join(File.dirname(File.expand_path __FILE__),'..')).realpath
+  ENVS    = File.join(BASE,'virtual-env')
+
+  @args = nil
+  @opts = nil
+  @env_dir  = nil
+  @command = nil
+
+  def initialize(args)
+   ...
+  end
+
+  def set_options()
+  end
+
+  def settings()
+    YAML.load_file(File.join(ENVS,@args[0],'environment.yml'))
+  end
+
+  def optparse()
+    if @opts.nil?
+      STDERR.puts "Option Parser for Action is Unimplemented"
+      exit 4
+     ...
+  end
+
+  def validate()
+   ...
+  end
+
+  def run()
+  end
+
+end
+</code></pre></section>
+
+<section><h3>Secure Action Options</h3>
+
+<pre><code class="hljs ruby">class SecureAction < Action
+
+  GPG_ID_FILE = File.join(Dir.home, '.password-store', '.gpg-id')
+
+  def set_options()
+    super
+    @options = {}
+    @opts = OptionParser.new do |opts|
+
+      opts.banner = 'Usage: vsense secure [-s &lt;key_file&gt; ] [-p &lt;gpg key id&gt; [-f]]'
+
+      opts.on('-s', '--ssh KEY', 'SSH identity for vagrant user in all new VMs') do |f|
+        @options[:ssh_key_file] = f
+      end
+
+      opts.on('-p', '--pgp ID', 'ID of PGP key to use for password encryption') do |id|
+        @options[:pgp_id] = id
+      end
+
+      opts.on('-f', '--force', "Overwrite existing PGP ID in #{GPG_ID_FILE}") do |f|
+        @options[:force_pgp] = f
+      end
+
+      opts.on_tail("-h", "--help", "Show this message") do
+        STDERR.puts opts
+        exit
+      end
+
+    end
+  end
+</code></pre></section>
+
+<section><h3>Secure Action Options</h3>
+
+<pre><code class="hljs ruby">  def run()
+    super
+
+    if File.exists?(@env_dir)
+      STDOUT.puts ('Environment already exists: %s' %[@env_dir]).red
+      exit 2
+    end
+
+    ...
+    
+    else # default is :run
+
+      puts ('Creating Runtime Environment: %s' % @args[0]).green
+
+      # configuration
+
+      for i in env_config['servers'].keys
+        env_config['servers'][i]['hostname'].sub!('%env%',@args[0])
+      end
+
+      if not @options[:fixture].nil?
+        env_config['fixture'] = @options[:fixture].to_s
+      end
+
+      # connected to a build environment?
+
+      if not @options[:build].nil?
+        build_config = YAML.load_file(File.join(ENVS,@options[:build],"environment.yml"))
+        env_config['repository']['host'] = '%s.%s' % [build_config['servers']['repository']['hostname'], build_config['domain']]
+        env_config['repository']['custom'] = true
+        env_config['repository']['ip'] = build_config['servers']['repository']['ip']
+        env_config['repository']['ip_regex'] = '^' + build_config['servers']['repository']['ip'].gsub('.','\.')
+        env_config['repository']['protocol'] = 'http'
+      end
+
+      env_config['database']['type'] = @options[:database].to_s
+      env_config['servers']['bigsense']['os'] = @options[:os].to_s
+      env_config['servers']['ltsense']['os'] = @options[:os].to_s
+      env_config['repository']['stage'] = @options[:stage].to_s
+
+    end
+</code></pre></section>
 </section>
 <section data-markdown>
   <script type="text/template">
-  ## vSense
+  ## Contributing
 
-- Vagrant + Ansible
-- VirtualBox (development)
-- libvirt + kvm (production)
-- security
-  - SSH keys
-  - Password scrambling
+- Help test with vSense
+  - http://github.com/bigsense/vsense
+- Raspberry Pi Support
+- Beagle Bone Black Support
+- I2C support
+- Funding
+  - Grants, Sponsorship, Fellowship
+- Mailing List
+  - https://groups.google.com/group/bigsense
   </script>
 </section>
-<section>
-<section><h2>BigSense Web Service API</h2>
-<img src="images/bigsense_api.png" alt="BigSense API Chart" /></section>
-
-<section><h2>Example Query</h2>
-<img src="images/example-query.png" alt="Example Query" /></section>
 
 <section data-markdown>
   <script type="text/template">
-  ## LtSense
-```
-2015-03-16 03:28:56,256 DEBUG    Generated XML
-<?xml version="1.0" ?>
-<AgraData>
-	<package id="VagrantRelay01" timestamp="1426476536256">
-		<sensors>
-			<sensor id="VRTEMP01" type="Temperature" units="C">
-				<data>10</data>
-			</sensor>
-			<sensor id="VRTEMP02" type="Temperature" units="C">
-				<data>5</data>
-			</sensor>
-		</sensors>
-	</package>
-</AgraData>
+  ### Source Code
 
-2015-03-16 03:29:05,877 DEBUG    Preparing payload for transport to http://10.11.34.20:8080/Sensor.agra.xml
-2015-03-16 03:29:05,887 ERROR    HTTP Error 403
-2015-03-16 03:29:05,888 WARNING  Error delivering payload. Requeueing (Queue Size:18176). Retry in 10.0
-```
-  </script>
-</section>
-</section>
-<section data-markdown>
-  <script type="text/template">
-  ## The Future
+<img src="images/octo-nan.gif" alt="Nan-cat animated Github logo" style="width: 250px; float:right; border: none;" />
 
-- Support More Sensors (1-wire, I2C, Beagle Board ADC)
-- Database optimizations
-- Asynchronous Database Handling
-- GPS Support / Geospatial API
-- Self Registration 
+- http://github.com/bigsense/BigSense
+- http://github.com/bigsense/BigSenseTester
+- http://github.com/bigsense/LtSense
+- http://github.com/bigsense/vSense
+- http://github.com/bigsense/presentations
 
   </script>
 </section>
 
 <section data-markdown>
   <script type="text/template">
-  ### http://bigsense.io
+  ## Questions?
+
+
   </script>
 </section>
       </div>
