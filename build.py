@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import glob
-from os import path
+from os import path, unlink
 import sys
 
 html_section = """
@@ -41,11 +41,15 @@ def slide_file(fd):
       content += slide_content(slide)
   return content
 
+def clean():
+  for f in glob.glob('*.html'):
+    print('Removing {}'.format(f))
+    unlink(f)
 
 if __name__ == '__main__':
 
   if len(sys.argv) > 1 and sys.argv[1] == 'clean':
-    print('todo implement')
+    clean()
     exit(0)
 
   slide_files = glob.glob('*.slides')
