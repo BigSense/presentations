@@ -7,6 +7,8 @@ vsense-env.md, vsense-struct.md, vsense-struct-ansible.md, vsense-struct-core.md
 ruby-action.html, ruby-action-secure.html, ruby-action-create-run.html
 vsense-yml.md, vsense-env-yml.md, vsense-build-yml.md, vsense-infrastructure-yml.md
 ruby-env.html, vagrant-env.html, vagrant-config.html
+vsense-demo.md, vsense-demo-rest.md, sense-xml.html
+bigsense-rest-api.html, bigsense-example-query.html, bigsense-example-aggregate.md
 contributing.md
 source-code.md
 questions.md
