@@ -1,21 +1,14 @@
 <h3>The Basic Action</h3>
 
-<pre><code class="hljs ruby">class Action
+<pre><code class="hljs ruby" style="">class Action
 
   BASE    = Pathname.new(File.join(File.dirname(File.expand_path __FILE__),'..')).realpath
   ENVS    = File.join(BASE,'virtual-env')
+  ...
 
-  @args = nil
-  @opts = nil
-  @env_dir  = nil
-  @command = nil
+  def initialize(args) ...
 
-  def initialize(args)
-   ...
-  end
-
-  def set_options()
-  end
+  def set_options() ...
 
   def settings()
     YAML.load_file(File.join(ENVS,@args[0],'environment.yml'))
@@ -26,14 +19,8 @@
       STDERR.puts "Option Parser for Action is Unimplemented"
       exit 4
      ...
-  end
 
-  def validate()
-   ...
-  end
+  def validate() ...
 
-  def run()
-  end
-
-end
+  def run() ...
 </code></pre>

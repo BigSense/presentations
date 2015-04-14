@@ -1,0 +1,29 @@
+<h3>Environment</h3>
+
+<pre><code class="hljs ruby" style="">require 'yaml'
+require_relative "action"
+
+class Environment
+
+  DEFAULT_VIRTUALBOX_IMGS = {
+    'ubuntu' => 'ubuntu/trusty64',
+    'debian' => 'puppetlabs/debian-7.8-64-nocm',
+    'centos' =>  'chef/centos-7.0',
+    'opensuse' => 'webhippie/opensuse-13.1'
+  }
+
+  ENV_FILE = File.join(Action::ENVS,'vsense.yml')
+  @@settings = File.exists?(ENV_FILE) ? YAML.load_file(ENV_FILE) : { 'environments' => [], 'security' => {}, 'boxes' => DEFAULT_VIRTUALBOX_IMGS }
+  @@env_settings = @@settings['environments']
+  @@sec_settings = @@settings['security']
+
+  def self.add(name,env_type)
+    @@env_settings << { 'name' => name , 'type' => env_type }
+    save_env_list
+  end
+
+  def self.del(name)
+    @@settings['environments'] = @@env_settings.reject { |h| h['name'] == name }
+    save_env_list
+  end
+</code></pre>

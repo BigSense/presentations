@@ -8,3 +8,8 @@ Usage: vsense secure [-s <key_file> ] [-p <gpg key id> [-f]]
     -f, --force                      Overwrite existing PGP ID in /home/sumit/.password-store/.gpg-id
     -h, --help                       Show this message
 ```
+
+- Additional Dependencies
+  - whois (mkpasswd)
+  - pwgen
+  - pass (optional)

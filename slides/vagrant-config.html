@@ -1,0 +1,30 @@
+<h3>Environment</h3>
+
+<pre><code class="hljs ruby" style="">VAGRANTFILE_API_VERSION = "2"
+
+require './vagrantenv'
+vars = VagrantEnv.new
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = vars.vbox_image('ubuntu')
+
+  if vars.ssh_security_enabled?
+    config.ssh.private_key_path = [ File.join(ENV['HOME'], '.vagrant.d', 'insecure_private_key') , vars.ssh_identity_key_file()]
+  end
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  config.vm.define "database" do |database|
+    database.vm.network :private_network, ip: vars.ip('database')
+    database.vm.hostname = vars.hostname('database')
+    database.hostmanager.aliases = vars.aliases('database')
+    database.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/database.yml"
+    end
+  end
+  ...
+</code></pre>

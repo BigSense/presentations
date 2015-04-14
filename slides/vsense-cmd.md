@@ -1,6 +1,5 @@
 ## vSense
 
-vSense provisioning system (written in ruby)
 
 ```
 ./vsense
