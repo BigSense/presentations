@@ -1,0 +1,13 @@
+#!/bin/sh
+
+./build.py clean
+./build.py 
+TMP=$(mktemp -d)
+cp -r css images js lib plugin videos screencasts *.html "$TMP"
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+git checkout gh-pages
+cp -r $TMP/* .
+git add -A
+git commit -m "Generating Pages"
+git push origin gh-pages
+git checkout "$BRANCH"
