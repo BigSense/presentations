@@ -20,6 +20,8 @@
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="lib/css/zenburn.css" />
 
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="stylesheet" href="css/custom.css" />
 
     <!-- Printing and PDF exports -->
@@ -48,6 +50,18 @@
 ### Using Ruby to build virtual environments for Sensor Networks
 
 [Sumit Khanna](http://penguindreams.org "Website") / [@djsumdog](:http://twitter.com/djsumdog "Twitter")
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Overview 
+
+- Green Learning Station
+- Technology Stack
+- vSense
+  - Code
+  - Examples
   </script>
 </section>
 
@@ -131,6 +145,8 @@
   - Queue system for unreliable networks
   - Multi-format support (XML)
   - Support for 1-Wire sensors via One Wire File System (OWFS)
+- vSense Virtual Environment written in Ruby
+  - Vagrant, Ansible
 - Originally packaged for OpenWRT
 - Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
   </script>
@@ -140,7 +156,12 @@
   <script type="text/template">
   ## vSense
 
+- Written in Ruby
 - Vagrant + Ansible
+- Creates VM Sets
+  - Build
+  - Runtime
+  - Infrastructure
 - VirtualBox (development)
 - libvirt + kvm (production)
 - security
@@ -153,7 +174,6 @@
   <script type="text/template">
   ## vSense
 
-vSense provisioning system (written in ruby)
 
 ```
 ./vsense
@@ -204,27 +224,142 @@ Usage: vsense secure [-s <key_file> ] [-p <gpg key id> [-f]]
     -f, --force                      Overwrite existing PGP ID in /home/sumit/.password-store/.gpg-id
     -h, --help                       Show this message
 ```
+
+- Additional Dependencies
+  - whois (mkpasswd)
+  - pwgen
+  - pass (optional)
+  </script>
+</section>
+</section><section>
+<section data-markdown>
+  <script type="text/template">
+  ## Environment Types
+
+- Runtime
+  - BigSense, LtSense, Database
+  - MySQL, PostgreSQL, MS SQL (coming soon)
+  - Ubuntu, CentOS, Debian, openSUSE
+- Build
+  - Jenkins
+  - Repository (rpm/apt)
+- Infrastructure
+  - Wiki
+  - HAProxy
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## vSense Structure
+
+```
+vSense
+├── ansible
+├── core
+├── fixtures
+├── lib
+├── LICENSE
+├── README.md
+├── virtual-env
+└── vsense
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Ansible Structure
+
+```
+ansible/
+├── bigsense.yml
+├── build.yml
+├── database.yml
+├── haproxy.yml
+├── ltsense.yml
+├── repo.yml
+├── roles
+│   ├── ansible-jenkins
+│   ├── bigsense
+│   ├── build
+│   ├── build-host
+│   ├── database
+│   ├── haproxy
+│   ├── ltsense
+│   ├── repo
+│   ├── repo-client
+│   ├── security
+│   └── wiki
+└── wiki.yml
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Core Files
+
+```
+core
+├── build
+│   ├── environment.yml
+│   └── Vagrantfile
+├── infrastructure
+│   ├── environment.yml
+│   └── Vagrantfile
+├── run
+│   ├── environment.yml
+│   └── Vagrantfile
+└── vagrantenv.rb
+
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Testing Fixtures
+
+```
+fixtures/
+├── gls-data.mysql.bz2
+└── gls-data.postgres.bz2
+
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## vSense Ruby Code
+
+```
+lib/
+├── action.rb
+├── colours.rb
+├── create.rb
+├── destroy.rb
+├── env.rb
+├── genkey.rb
+├── secure.rb
+└── vagrant.rb
+
+```
   </script>
 </section>
 </section><section>
 <section><h3>The Basic Action</h3>
 
-<pre><code class="hljs ruby">class Action
+<pre><code class="hljs ruby" style="">class Action
 
   BASE    = Pathname.new(File.join(File.dirname(File.expand_path __FILE__),'..')).realpath
   ENVS    = File.join(BASE,'virtual-env')
+  ...
 
-  @args = nil
-  @opts = nil
-  @env_dir  = nil
-  @command = nil
+  def initialize(args) ...
 
-  def initialize(args)
-   ...
-  end
-
-  def set_options()
-  end
+  def set_options() ...
 
   def settings()
     YAML.load_file(File.join(ENVS,@args[0],'environment.yml'))
@@ -235,16 +370,10 @@ Usage: vsense secure [-s <key_file> ] [-p <gpg key id> [-f]]
       STDERR.puts "Option Parser for Action is Unimplemented"
       exit 4
      ...
-  end
 
-  def validate()
-   ...
-  end
+  def validate() ...
 
-  def run()
-  end
-
-end
+  def run() ...
 </code></pre></section>
 
 <section><h3>Secure Action Options</h3>
@@ -281,7 +410,7 @@ end
   end
 </code></pre></section>
 
-<section><h3>Secure Action Options</h3>
+<section><h3>Run Action Create Options</h3>
 
 <pre><code class="hljs ruby">  def run()
     super
@@ -325,6 +454,277 @@ end
 
     end
 </code></pre></section>
+</section><section>
+<section data-markdown>
+  <script type="text/template">
+  ## vSense/virtual-env/vsense.yml 
+
+```
+---
+environments:
+- name: build
+  type: build
+- name: org
+  type: infrastructure
+- name: gls
+  type: run
+security:
+  pgp_id: 7ACLOZ8Y
+boxes:
+  ubuntu: baremettle/ubuntu-14.04
+  debian: zauberpony/wheezy
+  centos: hansode/centos-7.0.1406-x86_64
+  opensuse: alchemy/opensuse-13.2-64
+
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## demo1/environment.yml
+
+```
+---
+name: demo1
+type: run
+domain: internal
+repository:
+  custom: false
+  protocol: https
+  host: repo.bigsense.io
+  stage: nightly
+servers:
+  bigsense:
+    hostname: bigsense-demo1
+    os: ubuntu
+    ip: 10.11.1.20
+  ltsense:
+    hostname: ltsense-demo1
+    os: ubuntu
+    ip: 10.11.1.21
+  database:
+    hostname: db-demo1
+    ip: 10.11.1.22
+database:
+  type: mysql
+  name: bigsense
+  username: bigsense
+  password: bigsense
+  ddl_username: bigsense_ddl
+  ddl_password: bigsense_ddl
+bigsense:
+  security_manager: DisabledSecurityManager
+  http_port: 8080
+  server: tomcat
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## builder/environment.yml
+
+```
+---
+name: builder
+type: build
+domain: internal
+servers:
+  repository:
+    hostname: repo
+    ip: 10.11.1.10
+  build:
+    hostname: build
+    ip: 10.11.1.11
+    bigsense_src: http://github.com/BigSense/BigSense
+    bigsense_tester_src: http://github.com/BigSense/BigSenseTester
+    ltsense_src : http://github.com/BigSense/LtSense
+pgp:
+  key_type: DSA
+  key_length: 1024
+  subkey_type: ELG-E
+  subkey_length: 1024
+  name: http://example.org
+  comment: BigSensePGPKey
+  expire: 0
+  passphrase: changeme
+scm:
+  polling: true
+  polling_interval: H/15 * * * *
+
+```
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## core/environment.yml
+
+```
+---
+name: core
+type: infrastructure
+domain: internal
+ext_gq: 10.42.7.1
+servers:
+  haproxy:
+    hostname: haproxy
+    ip: 10.11.2.10
+    ext_iface: eth1
+    ext_ip: 10.22.2.10
+  wiki:
+    hostname: wiki
+    ip: 10.22.2.12
+confluence:
+  version: 5.6.6
+  db_name: confluence
+  db_user: confluence
+  db_pass: wikipass
+haproxy:
+  vhosts:
+    - { subdomain: repo , ip: 10.11.1.10 , port: 80 }
+    - { ip: 10.22.2.12 , port: 8090 }
+```
+  </script>
+</section>
+</section><section>
+<section><h3>Environment</h3>
+
+<pre><code class="hljs ruby" style="">require 'yaml'
+require_relative "action"
+
+class Environment
+
+  DEFAULT_VIRTUALBOX_IMGS = {
+    'ubuntu' => 'ubuntu/trusty64',
+    'debian' => 'puppetlabs/debian-7.8-64-nocm',
+    'centos' =>  'chef/centos-7.0',
+    'opensuse' => 'webhippie/opensuse-13.1'
+  }
+
+  ENV_FILE = File.join(Action::ENVS,'vsense.yml')
+  @@settings = File.exists?(ENV_FILE) ? YAML.load_file(ENV_FILE) : { 'environments' => [], 'security' => {}, 'boxes' => DEFAULT_VIRTUALBOX_IMGS }
+  @@env_settings = @@settings['environments']
+  @@sec_settings = @@settings['security']
+
+  def self.add(name,env_type)
+    @@env_settings << { 'name' => name , 'type' => env_type }
+    save_env_list
+  end
+
+  def self.del(name)
+    @@settings['environments'] = @@env_settings.reject { |h| h['name'] == name }
+    save_env_list
+  end
+</code></pre></section>
+
+<section><h3>Environment</h3>
+
+<pre><code class="hljs ruby" style="">class VagrantEnv
+
+  def initialize(global_yml='../vsense.yml', local_yml='environment.yml')
+    @vars = YAML.load_file(local_yml)
+    @vsense = YAML.load_file(global_yml)
+  end
+
+  # security
+
+  def ssh_security_enabled?()
+    not @vsense['security']['ssh_key_file'].nil?
+  end
+
+  def ssh_identity_key_file()
+    @vsense['security']['ssh_key_file']
+  end
+
+  # end security
+
+  def ip(server)
+    @vars['servers'][server]['ip']
+  end
+</code></pre></section>
+
+<section><h3>Environment</h3>
+
+<pre><code class="hljs ruby" style="">VAGRANTFILE_API_VERSION = "2"
+
+require './vagrantenv'
+vars = VagrantEnv.new
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box = vars.vbox_image('ubuntu')
+
+  if vars.ssh_security_enabled?
+    config.ssh.private_key_path = [ File.join(ENV['HOME'], '.vagrant.d', 'insecure_private_key') , vars.ssh_identity_key_file()]
+  end
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  config.vm.define "database" do |database|
+    database.vm.network :private_network, ip: vars.ip('database')
+    database.vm.hostname = vars.hostname('database')
+    database.hostmanager.aliases = vars.aliases('database')
+    database.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/database.yml"
+    end
+  end
+  ...
+</code></pre></section>
+</section><section>
+<section data-markdown>
+  <script type="text/template">
+  ### vSense Demo
+
+<iframe src="screencasts/vsense-demo.html" width="1000px" height="800px"></iframe>
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### vSense Demo
+
+![BigSense Web Service Query Screenshot](images/vsense-rest.png)
+  </script>
+</section>
+
+<section><h3>Sense XML</h3>
+<pre><code class="hljs xml"><?xml version="1.0"?>
+<SenseData>
+    <package id="OneWireTester" timestamp="1428192392795">
+        <sensors>
+            <sensor id="AGEWA99B" type=" Temperature" units="C">
+                <data>34</data>
+            </sensor>
+            <sensor id="WTR001AD-V" type="Volume" units="ml">
+                <data>50</data>
+            </sensor>
+            <sensor id="WTR001AD-FR" type="FlowRate" units="ml/s">
+            <data>2.45</data>
+        </sensor>
+    </sensors>
+</package>
+</SenseData></code></pre></section>
+</section><section>
+<section><h2>BigSense Web Service API</h2>
+<img src="images/bigsense_api.png" alt="BigSense API Chart" /></section>
+
+<section><h2>Example Query</h2>
+<img src="images/example-query.png" alt="Example Query" /></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### Example Aggregate Query
+
+    http://bigsense:8080/aggregate/SumVolume/DateRange/20120501/20120510/1440.table.html?Timezone=EST5EDT&Units=Standard
+
+![Aggregate Query Result in HTML Table Format](images/bigsense-example-aggregate.png)
+  </script>
+</section>
 </section>
 <section data-markdown>
   <script type="text/template">

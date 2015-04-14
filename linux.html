@@ -20,6 +20,8 @@
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="lib/css/zenburn.css" />
 
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="stylesheet" href="css/custom.css" />
 
     <!-- Printing and PDF exports -->
@@ -128,6 +130,8 @@
   - Queue system for unreliable networks
   - Multi-format support (XML)
   - Support for 1-Wire sensors via One Wire File System (OWFS)
+- vSense Virtual Environment written in Ruby
+  - Vagrant, Ansible
 - Originally packaged for OpenWRT
 - Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
   </script>
@@ -137,7 +141,6 @@
   <script type="text/template">
   ## vSense
 
-vSense provisioning system (written in ruby)
 
 ```
 ./vsense
@@ -188,6 +191,11 @@ Usage: vsense secure [-s <key_file> ] [-p <gpg key id> [-f]]
     -f, --force                      Overwrite existing PGP ID in /home/sumit/.password-store/.gpg-id
     -h, --help                       Show this message
 ```
+
+- Additional Dependencies
+  - whois (mkpasswd)
+  - pwgen
+  - pass (optional)
   </script>
 </section>
 </section>
@@ -195,7 +203,12 @@ Usage: vsense secure [-s <key_file> ] [-p <gpg key id> [-f]]
   <script type="text/template">
   ## vSense
 
+- Written in Ruby
 - Vagrant + Ansible
+- Creates VM Sets
+  - Build
+  - Runtime
+  - Infrastructure
 - VirtualBox (development)
 - libvirt + kvm (production)
 - security

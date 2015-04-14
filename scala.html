@@ -20,6 +20,8 @@
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="lib/css/zenburn.css" />
 
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="stylesheet" href="css/custom.css" />
 
     <!-- Printing and PDF exports -->
@@ -139,6 +141,8 @@
   - Queue system for unreliable networks
   - Multi-format support (XML)
   - Support for 1-Wire sensors via One Wire File System (OWFS)
+- vSense Virtual Environment written in Ruby
+  - Vagrant, Ansible
 - Originally packaged for OpenWRT
 - Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
   </script>
@@ -521,13 +525,13 @@ class TabDelimitedFormat extends FlatFormatTrait {
 <SenseData>
     <package id="OneWireTester" timestamp="1428192392795">
         <sensors>
-            <sensor id="AGEWA99B" timestamp="1428192392795" type=" Temperature" units="C">
+            <sensor id="AGEWA99B" type=" Temperature" units="C">
                 <data>34</data>
             </sensor>
-            <sensor id="WTR001AD-V" timestamp=" 1428192392795" type="Volume" units="ml">
+            <sensor id="WTR001AD-V" type="Volume" units="ml">
                 <data>50</data>
             </sensor>
-            <sensor id="WTR001AD-FR" timestamp="1428192392795" type="FlowRate" units="ml/s">
+            <sensor id="WTR001AD-FR" type="FlowRate" units="ml/s">
             <data>2.45</data>
         </sensor>
     </sensors>
