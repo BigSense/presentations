@@ -675,6 +675,26 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   ...
 </code></pre></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Environment (ansible)
+
+
+```
+---
+- name: BigSense Server
+  hosts: bigsense
+  sudo: true
+  vars_files:
+    - ../environment.yml
+  roles:
+   - security
+   - { role: build-host, when: repository.custom == true }
+   - bigsense
+```
+  </script>
+</section>
 </section><section>
 <section data-markdown>
   <script type="text/template">
