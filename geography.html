@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8" />
+
+    <title>BigSense.io</title>
+
+    <meta name="description" content="Presentation for BigSense.io" />
+    <meta name="author" content="Sumit Khanna" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
+
+    <link rel="stylesheet" href="css/reveal.css" />
+    <link rel="stylesheet" href="css/theme/serif.css" id="theme" />
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css" />
+
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="stylesheet" href="css/custom.css" />
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+<section data-markdown>
+  <script type="text/template">
+  # BigSense
+### Building Environmental Sensor Networks
+
+[Sumit Khanna](http://penguindreams.org "Website") / [@djsumdog](:http://twitter.com/djsumdog "Twitter")
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense.io
+
+- Cincinnati, Ohio
+- Andrew Rettig
+- Embedded Linux Systems
+- Gather environmental sensor data
+  - Weather
+  - Rain Fall
+  - Temperature
+  - Barometer
+
+  </script>
+</section>
+
+<section><section>
+  <h2>Original Purpose</h2>
+  <p>Combined Sewer Systems</p>
+  <video>
+    <source src="videos/CSO_5.webm" type="video/webm" />
+    <source src="videos/CSO_5.mp4"  type="video/mp4" />
+  </video>
+</section>
+<section>
+  <h2>Original Purpose</h2>
+  <p>Combined Sewer Systems</p>
+  <video>
+    <source src="videos/CSO_5part2.webm" type="video/webm" />
+    <source src="videos/CSO_5part2.mp4"  type="video/mp4" />
+  </video>
+</section></section>
+
+<section><section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-level.jpg" alt="Green Learning Station Pavement Test Area" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-top.png" alt="Green Learning Station Pavement Test Area (Top View)" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GLS-side.jpg" alt="Green Learning Station Pavement Test Area (Side View)" width="600px" />
+</section>
+<section>
+  <h2>Green Learning Station</h2>
+  <img src="images/GreenLearningStationMap.png" alt="Green Learning Station Map" width="600px" />
+</section></section>
+
+<section><h2>Methodology</h2>
+<img src="images/GLS-sitespec.jpg" alt="Site Specifications" /></section>
+
+<section><h2>Linksys Running OpenWRT</h2>
+<img src="images/el2100.jpg" alt="Linksys Router Running OpenWRT" width="600px" /></section>
+
+<section><h2>Sensor Relays</h2>
+<img src="images/routers.jpg" alt="Sensor Relay Cabinet" width="600px" /></section>
+
+<section><h2>GPS</h2>
+<img src="images/sensor_gps.png" alt="Sensor GPS Locations" /></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Data Flow
+
+![Data Flow Diagram](images/DataFlowDiagram.png)
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Technology Stack
+
+- BigSense Web service written in Scala
+  - embedded Tomcat/Jetty
+- LtSense Client written in Python
+  - Queue system for unreliable networks
+  - Multi-format support (XML)
+  - Support for 1-Wire sensors via One Wire File System (OWFS)
+- vSense Virtual Environment written in Ruby
+  - Vagrant, Ansible
+- Originally packaged for OpenWRT
+- Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### The Project
+
+- Originally Open Source (UC@GLS)
+- Turned into a Startup
+- Had a great crew of people
+- Paul Graham's [18 Mistakes That Kill A Startup](http://paulgraham.com/startupmistakes.html)
+  - (We were making 10 ~ 11 of them)
+- Funded me moving to Melbourne, Australia 
+- Startup eventually let me go
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### BigSense
+
+- Backported all the changes to GreenOven/GreenMitt
+- Created the open source BigSense/LtSense
+- GNU GPLv3 License 
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### Components
+
+- BigSense
+- BigSenseTester
+- LtSense
+- vSense
+  </script>
+</section>
+<section>
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Tests
+
+![Basic Test Screenshot](images/bigsense-tests-1.jpg)
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Tests
+
+![Error Test Screenshot](images/bigsense-tests-agg-errors.jpg)
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Tests
+
+![Location Tests Screenshot](images/bigsense-tests-location.jpg)
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## BigSense Tests
+
+- Test driven development
+- Tests written first (resulting in failure)
+- Code developed second (changing tests to pass)
+- Over 130 tests
+- Checking for over 300 success conditions 
+  </script>
+</section>
+</section>
+<section data-markdown>
+  <script type="text/template">
+  ### Old Data
+
+- Data had do be extracted from the webservice
+- raw_pull.py
+
+  </script>
+</section>
+
+<section><h3>raw_pull.py</h3>
+
+<pre><code class="hljs python">  http = urllib3.PoolManager(maxsize=num_pools)
+
+  def pak_file(pack_num):
+    return 'xml/{0}.agra.xml'.format(pack_num)
+
+
+  def get_next_package():
+    global pack_lock
+    global package
+    pack_lock.acquire()
+
+    while True:
+      if os.path.exists(pak_file(package)):
+        try:
+          parseString(open(pak_file(package),'r').read())
+          sprint('Package {0} exists and is valid XML'.format(package),OK)
+          package += 1
+        except ExpatError:
+          sprint(write_error('Package {0} is invalid XML'.format(package),WARN))
+          break
+      else:
+        break
+
+</code></pre></section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### Old Data (Fixtures)
+
+- https://github.com/BigSense/vSense/tree/master/fixtures
+  - gls-data.mysql.bz2
+  - gls-data.postgres.bz2
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### Going Forward
+
+- Data hosted at the University of Cincinnati
+- Data should always be public and open
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### What was removed
+
+ - Rain meters 
+ - Water measurements
+ - Sensors that require calibration 
+ - Photos/Imaging/Camera
+ - Data processing (N*U)
+ - Vestigial Components 
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### Camera Images
+ 
+  - Python APIs for OpenCV and Video4Linux
+  - Data Transmission?
+    - Base64/yEnc into XML?
+    - Binary XML attachments?
+    - Separate image protocol?
+    - Zip file with XML/images?
+      - Securely dealing with Images/Zip 
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### We want to add
+
+  - Simple Sensors
+  - 1-Wire: Humidity, pH, Soil Moisture
+  - Beagle Board GPIO: General GPIO Sensor Architecture 
+  - As many basic sensors as possible!
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### Open Source
+
+  - Plan to release Workbook under Creative Commons 4.0
+    - Non-commercial, Attribution, Share-alike
+  - GNU GPLv3
+  - Avoid the Startup Mess
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### How you can contribute 
+
+  - By taking this class :)
+  - By joining our mailing list:
+    - https://groups.google.com/forum/#!forum/bigsense
+  - Finding and filing bugs:
+    - http://github.com/bigsense
+  - Helping us support more sensors
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### Source Code
+
+<img src="images/octo-nan.gif" alt="Nan-cat animated Github logo" style="width: 250px; float:right; border: none;" />
+
+- http://github.com/bigsense/BigSense
+- http://github.com/bigsense/BigSenseTester
+- http://github.com/bigsense/LtSense
+- http://github.com/bigsense/vSense
+- http://github.com/bigsense/presentations
+
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ### http://bigsense.io
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Questions?
+
+
+  </script>
+</section>
+      </div>
+
+<img src="images/logo.png" style="
+                        position: absolute;
+                        bottom: 50px;
+                        right: 35px;
+                        width: 300px;" />
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        width: '80%',
+        //height: '80%',
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
