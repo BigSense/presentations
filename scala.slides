@@ -6,6 +6,7 @@ java-frameworks.html
 resteasy-post.html, resteasy-delete.html, resteasy-get.html
 servlet.html, servlet-csc202.html, servlet-core.html, servlet-service-code.html
 bigsense-components.md
+bigsense-tests.set
 scala-action-request.html, scala-action-response.html, scala-action-trait.html, scala-action-query.html
 scala-validation-trait.html, scala-validation-example.html
 bigsense-data-formats.md, scala-format-trait.html, scala-format-flat.html, scala-format-csv.html, scala-format-xml-load.html, scala-format-xml-render.html, sense-xml.html
