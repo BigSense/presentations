@@ -128,12 +128,14 @@
   - embedded Tomcat/Jetty
 - LtSense Client written in Python
   - Queue system for unreliable networks
-  - Multi-format support (XML)
+  - Multi-format support (XML, JSON)
   - Support for 1-Wire sensors via One Wire File System (OWFS)
+  - Support for Phidgets (vendor supplied python wrappers)
 - vSense Virtual Environment written in Ruby
   - Vagrant, Ansible
 - Originally packaged for OpenWRT
 - Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
+
   </script>
 </section>
 <section>
@@ -253,11 +255,11 @@ Usage: vsense secure [-s <key_file> ] [-p <gpg key id> [-f]]
   <script type="text/template">
   ## The Future
 
-- Support More Sensors (1-wire, I2C, Beagle Board ADC)
-- Database optimizations
+- Support More Sensors (I2C, Beagle Board ADC)
 - Asynchronous Database Handling
-- GPS Support / Geospatial API
-- Self Registration 
+- Replace Tomcat/Jetty with Netty
+- Official Docker Containers
+- Dockerize Integration Tests
 
   </script>
 </section>

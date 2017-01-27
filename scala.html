@@ -139,12 +139,14 @@
   - embedded Tomcat/Jetty
 - LtSense Client written in Python
   - Queue system for unreliable networks
-  - Multi-format support (XML)
+  - Multi-format support (XML, JSON)
   - Support for 1-Wire sensors via One Wire File System (OWFS)
+  - Support for Phidgets (vendor supplied python wrappers)
 - vSense Virtual Environment written in Ruby
   - Vagrant, Ansible
 - Originally packaged for OpenWRT
 - Currently packaged for Ubuntu 14, Debian 7/8, CentOS 7 and openSUSE 13
+
   </script>
 </section>
 
@@ -452,11 +454,14 @@ trait ActionTrait  {
   <script type="text/template">
   ### Data Formats
 
-- Tab Delimited 
-- Comma Separated
-- Sense XML
-- Flat XML
-- Sortable HTML Table
+- Input
+  - Sense XML
+  - Sense JSON
+- Output
+  - Tab Delimited
+  - Comma Separated
+  - Sortable HTML Table
+
   </script>
 </section>
 
@@ -573,6 +578,65 @@ class TabDelimitedFormat extends FlatFormatTrait {
     </sensors>
 </package>
 </SenseData></code></pre></section>
+</section><section>
+<section><h3>Sense XML with GPS Data</h3>
+<pre><code class="hljs xml"><?xml version="1.0" ?>
+<sensedata>
+	<package id="MyTestRelay01" timestamp="1485541390336">
+		<gps>
+			<accuracy altitude_error="69.0" climb_error="" latitude_error="40.201" longitude_error="124.797" speed_error="249.59" track_error=""/>
+			<location altitude="146.3" latitude="47.620886667" longitude="-122.321093333"/>
+			<delta climb="0.0" speed="1.605" track="334.87"/>
+		</gps>
+		<sensors>
+			<sensor id="1BEA03020000" type="Temperature" units="C">
+				<data>21.2188</data>
+			</sensor>
+			<sensor id="1BEA03020000" type="Humidity" units="%">
+				<data>26.9396</data>
+			</sensor>
+		</sensors>
+	</package>
+</sensedata>
+</code></pre>
+</section>
+
+<section><h3>Sense XML with GPS Data</h3>
+<pre><code class="hljs json">  {
+    "timestamp": 1485541636692,
+    "sensors": [
+      {
+        "units": "C",
+        "data": "17.9062",
+        "type": "Temperature",
+        "id": "1BEA03020000"
+      }
+    ],
+    "id": "MyTestRelay01",
+    "gps": {
+      "delta": {
+        "track": "328.76",
+        "climb": "0.0",
+        "speed": "0.0"
+      },
+      "location": {
+        "latitude": "47.620651667",
+        "altitude": "127.4",
+        "longitude": "-122.320985"
+      },
+      "accuracy": {
+        "track_error": "",
+        "longitude_error": "124.797",
+        "climb_error": "",
+        "speed_error": "249.59",
+        "latitude_error": "40.201",
+        "altitude_error": "34.5"
+      }
+    }
+  }
+]
+</code></pre>
+</section>
 </section><section>
 <section><h3>Security</h3>
 <pre><code class="hljs scala">trait SecurityManagerTrait {
@@ -767,6 +831,58 @@ trait ConverterTrait {
 </section><section>
 <section data-markdown>
   <script type="text/template">
+  ## Scala Dependency Injections
+
+    // Actions
+
+    lazy val aggregateAction = new AggregateAction {validator = new AggregateActionValidator}
+    lazy val imageAction = new ImageAction {validator = new ImageActionValidator}
+    lazy val queryAction = new QueryAction {validator = new QueryActionValidator}
+    lazy val sensorAction = new SensorAction {validator = new SensorActionValidator}
+    lazy val statusAction = new StatusAction {validator = new StatusActionValidator}
+
+    def getAction(action: String): Option[ActionTrait] = {
+      action match {
+        case "Aggregate" => Some(aggregateAction)
+        case "Image" => Some(imageAction)
+        case "Query" => Some(queryAction)
+        case "Sensor" => Some(sensorAction)
+        case "Status" => Some(statusAction)
+        case _ => None
+      }
+    }
+
+  </script>
+</section>
+
+<section data-markdown>
+  <script type="text/template">
+  ## Scala Dependency Injections
+
+    // Formats
+
+    lazy val senseXMLFormat = new SenseDataXMLFormat
+    lazy val txtFormat = new TabDelimitedFormat
+    lazy val csvFormat = new CSVFormat
+    lazy val tableHTMLFormat = new TableHTMLFormat
+    lazy val senseJsonFormat = new SenseJsonFormat
+
+    def getFormat(format: String): Option[FormatTrait] = {
+      format match {
+        case "sense.xml" => Some(senseXMLFormat)
+        case "txt" => Some(txtFormat)
+        case "csv" => Some(csvFormat)
+        case "table.html" => Some(tableHTMLFormat)
+        case "sense.json" => Some(senseJsonFormat)
+        case _ => None
+      }
+    }
+
+  </script>
+</section>
+</section><section>
+<section data-markdown>
+  <script type="text/template">
   ## Web Applications
 - Traditional Tomcat/WAR deployment
 - Embedded Jetty
@@ -921,7 +1037,6 @@ httpPort=8282
 server=tomcat
 ```
 
-    /usr/bin/bigsense --ddl > initial.sql
   </script>
 </section>
 <section>
@@ -930,6 +1045,10 @@ server=tomcat
 
 <section><h2>Example Query</h2>
 <img src="images/example-query.png" alt="Example Query" /></section>
+
+<section><h2>Example Geospacial Query</h2>
+<img src="images/geo-queries.png" alt="Example Geospacial Query" />
+</section>
 
 <section data-markdown>
   <script type="text/template">
@@ -945,11 +1064,11 @@ server=tomcat
   <script type="text/template">
   ## The Future
 
-- Support More Sensors (1-wire, I2C, Beagle Board ADC)
-- Database optimizations
+- Support More Sensors (I2C, Beagle Board ADC)
 - Asynchronous Database Handling
-- GPS Support / Geospatial API
-- Self Registration 
+- Replace Tomcat/Jetty with Netty
+- Official Docker Containers
+- Dockerize Integration Tests
 
   </script>
 </section>
@@ -968,13 +1087,11 @@ server=tomcat
 
   </script>
 </section>
-<section>
+
 <section data-markdown>
   <script type="text/template">
   ## Contributing
 
-- Help test with vSense
-  - http://github.com/bigsense/vsense
 - Raspberry Pi Support
 - Beagle Bone Black Support
 - I2C support
@@ -982,18 +1099,10 @@ server=tomcat
   - Grants, Sponsorship, Fellowship
 - Mailing List
   - https://groups.google.com/group/bigsense
+
   </script>
 </section>
 
-<section data-markdown>
-  <script type="text/template">
-  ## Contributing
-
-<img src="images/bitcoin.png" alt="Bitcoin Logo" style="width: 50px; border:0px; display:block; margin:auto; box-shadow:none" />
-<img src="images/bitcoin-qr.png" alt="Bitcoin QR Code" style="width: 400px;" />
-  </script>
-</section>
-</section>
 <section data-markdown>
   <script type="text/template">
   ## Questions?
