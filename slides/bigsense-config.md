@@ -12,5 +12,3 @@ securityManager=SignatureSecurityManager
 httpPort=8282
 server=tomcat
 ```
-
-    /usr/bin/bigsense --ddl > initial.sql

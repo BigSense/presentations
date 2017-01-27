@@ -1,7 +1,7 @@
 ## The Future
 
-- Support More Sensors (1-wire, I2C, Beagle Board ADC)
-- Database optimizations
+- Support More Sensors (I2C, Beagle Board ADC)
 - Asynchronous Database Handling
-- GPS Support / Geospatial API
-- Self Registration 
+- Replace Tomcat/Jetty with Netty
+- Official Docker Containers
+- Dockerize Integration Tests

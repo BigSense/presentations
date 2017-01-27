@@ -1,7 +1,9 @@
 ### Data Formats
 
-- Tab Delimited 
-- Comma Separated
-- Sense XML
-- Flat XML
-- Sortable HTML Table
+- Input
+  - Sense XML
+  - Sense JSON
+- Output
+  - Tab Delimited
+  - Comma Separated
+  - Sortable HTML Table

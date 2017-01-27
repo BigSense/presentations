@@ -4,8 +4,9 @@
   - embedded Tomcat/Jetty
 - LtSense Client written in Python
   - Queue system for unreliable networks
-  - Multi-format support (XML)
+  - Multi-format support (XML, JSON)
   - Support for 1-Wire sensors via One Wire File System (OWFS)
+  - Support for Phidgets (vendor supplied python wrappers)
 - vSense Virtual Environment written in Ruby
   - Vagrant, Ansible
 - Originally packaged for OpenWRT
