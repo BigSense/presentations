@@ -1,0 +1,19 @@
+<h3>Conversions</h3>
+<pre><code class="hljs scala">class UnitsConverter extends ConverterTrait {
+
+  private def convert(units : String, data : String, direction : String) : (String,String) = {
+    direction match {
+      case "Standard" =>
+        units.toLowerCase() match {
+          case "c" => ((((data.toFloat * 9) / 5) + 32).toString, "F")
+          case "mm" => ((data.toFloat / 25.4).toString, "in")
+          case "mm/s" => ((data.toFloat / 25.4).toString, "in/s")
+          case "l/s" => ((data.toFloat * 0.2641).toString, "gal/s")
+          case "l" => ((data.toFloat * 0.2641).toString, "gal")
+          case "kph" => ((data.toFloat * 0.6213).toString, "mph")
+          case "ml" => ((data.toFloat / 29.573).toString, "oz")
+          case "ml/s" => ((data.toFloat / 29.573).toString, "oz/s")
+          case _ => (data, units)
+        }
+      case "Metric" =>
+          ...</code></pre>

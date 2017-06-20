@@ -1,0 +1,7 @@
+<h3>Actions</h3>
+<pre><code class="hljs scala">trait ActionTrait  {
+    val dbHandler : ServiceDataHandlerTrait = MySpring.serviceDataHandler
+    val validator : ValidatorTrait
+    def runAction(aReq : ActionRequest) : Response
+  }
+}</code></pre>
