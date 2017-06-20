@@ -376,6 +376,36 @@ class ViewResponse(val view : Html,
 </code></pre></section>
 
 <section><h3>Actions</h3>
+<pre><code class="hljs scala">sealed trait Response {
+  val status: Int = HttpServletResponse.SC_OK
+  val contentType: Option[String] = None
+  val newLocations: List[Int] = List()
+}
+
+case class BinaryResponse(
+  output : Array[Byte],
+  override val status : Int = HttpServletResponse.SC_OK,
+  override val contentType : Option[String] = Some("application/octet-stream"),
+  override val newLocations: List[Int] = List())
+  extends Response
+
+case class StringResponse(
+  output : String,
+  override val status : Int = HttpServletResponse.SC_OK,
+  override val contentType : Option[String] = Some("text/plain"),
+  override val newLocations: List[Int] = List())
+  extends Response
+
+case class ViewResponse(
+  view : Html,
+  override val status : Int = HttpServletResponse.SC_OK,
+  override val contentType : Option[String] = Some("text/html"),
+  override val newLocations: List[Int] = List())
+  extends Response
+</code></pre>
+</section>
+
+<section><h3>Actions</h3>
 <pre><code class="hljs scala">import scala.reflect.BeanProperty
 import io.bigsense.db.ServiceDataHandlerTrait
 import io.bigsense.validation.ValidatorTrait
@@ -389,6 +419,15 @@ trait ActionTrait  {
     def runAction(aReq : ActionRequest) : Response
     
 }</code></pre></section>
+
+<section><h3>Actions</h3>
+<pre><code class="hljs scala">trait ActionTrait  {
+    val dbHandler : ServiceDataHandlerTrait = MySpring.serviceDataHandler
+    val validator : ValidatorTrait
+    def runAction(aReq : ActionRequest) : Response
+  }
+}</code></pre>
+</section>
 
 <section><h3>Actions</h3>
 <pre><code class="hljs scala">class QueryAction extends ActionTrait {
@@ -410,6 +449,33 @@ trait ActionTrait  {
           case "DateRange" => {
             ...
 </code></pre></section>
+
+<section data-markdown>
+  <script type="text/template">
+  <h3>Actions</h3>
+<pre><code class="hljs scala">class QueryAction extends ActionTrait {
+
+  def runAction(aReq: ActionRequest): Response = {
+
+  def runAction(aReq: ActionRequest): Response = {
+
+    aReq.method match {
+      case "GET" => {
+        aReq.args(1) match {
+          case "Latest" => {
+            val limit: Int = aReq.args(2).toInt
+            StringResponse(aReq.format.renderModels(dbHandler.retrieveLatestSensorData(limit, aReq.parameters)))
+          }
+          case "TimestampRange" => {
+            val start = TimeHelper.timestampToDate(aReq.args(2))
+            val end = TimeHelper.timestampToDate(aReq.args(3))
+            StringResponse(aReq.format.renderModels(dbHandler.retrieveDateRange(start, end, aReq.parameters)))
+          }
+            ...
+</code></pre>
+
+  </script>
+</section>
 </section><section>
 <section><h3>Validation</h3>
 <pre><code class="hljs scala">trait ValidatorTrait {
@@ -449,6 +515,27 @@ trait ActionTrait  {
               if (aReq.args.length != 4)
               ...
 </code></pre></section>
+
+<section><h3>Validation</h3>
+<pre><code class="hljs scala">class QueryActionValidator extends ValidatorTrait {
+
+  def validateRequest(aReq: ActionRequest): Option[ValidationError] =
+    aReq.method match {
+      case "GET" =>
+        if (aReq.args.length >= 2) {
+          aReq.args(1) match {
+            case "Latest" =>
+              if (aReq.args.length != 3) {
+                Some(ValidationError("Latest Requires a Limit Argument", BAD_REQUEST))
+              }
+              else if (!checkInt(aReq.args(2))) {
+                Some(ValidationError("Limit Argument Must be an Integer", BAD_REQUEST))
+              }
+              else None
+            case "TimestampRange" =>
+              ...
+</code></pre>
+</section>
 </section><section>
 <section data-markdown>
   <script type="text/template">
@@ -731,6 +818,27 @@ trait ConverterTrait {
 		    case "mm/s" => {
 		      retunits = "in/s"}
 		      ...</code></pre></section>
+
+<section><h3>Conversions</h3>
+<pre><code class="hljs scala">class UnitsConverter extends ConverterTrait {
+
+  private def convert(units : String, data : String, direction : String) : (String,String) = {
+    direction match {
+      case "Standard" =>
+        units.toLowerCase() match {
+          case "c" => ((((data.toFloat * 9) / 5) + 32).toString, "F")
+          case "mm" => ((data.toFloat / 25.4).toString, "in")
+          case "mm/s" => ((data.toFloat / 25.4).toString, "in/s")
+          case "l/s" => ((data.toFloat * 0.2641).toString, "gal/s")
+          case "l" => ((data.toFloat * 0.2641).toString, "gal")
+          case "kph" => ((data.toFloat * 0.6213).toString, "mph")
+          case "ml" => ((data.toFloat / 29.573).toString, "oz")
+          case "ml/s" => ((data.toFloat / 29.573).toString, "oz/s")
+          case _ => (data, units)
+        }
+      case "Metric" =>
+          ...</code></pre>
+</section>
 
 <section><h3>Conversions</h3>
 <pre><code class="hljs scala">class TimezoneConverter extends ConverterTrait {
