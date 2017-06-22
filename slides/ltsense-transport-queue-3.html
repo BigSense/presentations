@@ -1,0 +1,14 @@
+<h3>Queued Transport</h3>
+
+<pre><code class="hljs python">    def send_package(self, payload):
+        """Adds the payload to the queue which is handeled by the queue thread."""
+        payload = AbstractTransport.send_package(self, payload)
+        self.queue.enqueue(payload)
+
+    def _run_transport(self, payload):
+        """Implement this function in subclasses to transport data.
+        Return false if the data failed to transport so it will be
+        placed back in the queue."""
+        logging.warn('Unimplemented Queue Transport Detected. You have tried to use an abstract class. Did you want QueuedHttpPostTransport?')
+        return True
+</code></pre>

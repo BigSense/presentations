@@ -1,0 +1,22 @@
+<h3>Data Formats</h3>
+
+<pre><code class="hljs python">class AbstractDataHandler(object):
+
+    def __init__(self):
+        object.__init__(self)
+        self.identifier = None
+        self.location = None
+        self.gps_fields = {'location': ['longitude', 'latitude', 'altitude'],
+                           'delta': ['speed', 'track', 'climb'],
+                           'accuracy': ['longitude_error', 'latitude_error',
+                                        'altitude_error', 'speed_error',
+                                        'climb_error', 'track_error']}
+
+    def render_data(self, sensors):
+        pass
+
+    def timestamp(self):
+        # Webservice expects time as a long in miliseconds.
+        # time.time() is seconds as a float
+        return int(round(time.time() * 1000))
+</code></pre>

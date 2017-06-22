@@ -1,0 +1,13 @@
+<h3>Identifiers</h3>
+
+<pre><code class="hljs python">class MacAddressIdentifier(AbstractIdentifier):
+
+    def __init__(self):
+        AbstractIdentifier.__init__(self)
+        self.adapter = 'eth0'
+
+    def identify(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', self.adapter[:15]))
+        return ''.join(['%02x:' % ord(char) for char in info[18:24]])[:-1]
+</code></pre>

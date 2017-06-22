@@ -1,0 +1,12 @@
+<h3>Controller</h3>
+
+<pre><code class="hljs python">    def run(self):
+        while not ltsense.exit_all_threads:
+            self.process_sensor_data()
+            for i in range(int(self.sample_rate)):
+                if ltsense.exit_all_threads:
+                    break
+                else:
+                    time.sleep(1)
+        logging.info('Exit Detected. Stopping Controller Thread')
+</code></pre>

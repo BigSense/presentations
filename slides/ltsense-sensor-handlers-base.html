@@ -1,0 +1,13 @@
+<h3>Data Handlers</h3>
+
+<pre><code class="hljs python">class AbstractSensorHandler(object):
+
+    def __init__(self):
+        object.__init__(self)
+        self.sensors = []
+
+        class GeneralSensorHandler(AbstractSensorHandler):
+
+            def __init__(self):
+                AbstractSensorHandler.__init__(self)
+</code></pre>

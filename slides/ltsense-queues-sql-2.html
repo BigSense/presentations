@@ -1,0 +1,18 @@
+<h3>Queues</h3>
+
+<pre><code class="hljs python">    def dequeue(self):
+        self.sql_lock.acquire()
+        retval = None
+        for row in self.__cursor().execute('SELECT id,payload FROM queue ORDER BY id ASC LIMIT 1'):
+            self.__cursor().execute('DELETE FROM queue WHERE id = ?', [row[0]])
+            self.__conn.commit()
+            retval = row[1]
+        self.sql_lock.release()
+        return retval
+
+    def enqueue(self, item):
+        self.sql_lock.acquire()
+        self.__cursor().execute('INSERT INTO queue(payload) VALUES(?)', [item])
+        self.__conn.commit()
+        self.sql_lock.release()
+</code></pre>

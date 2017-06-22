@@ -1,0 +1,30 @@
+<h3>GPS</h3>
+
+<pre><code class="hljs python">    def run(self):
+        try:
+            while not ltsense.exit_all_threads:
+                report = self._gps.next()
+                # Wait for a 3D Fix
+                if report['class'] == 'TPV' and report['mode'] == 3:
+                    self.longitude = str(report.lon) if 'lon' in report else ''
+                    self.latitude = str(report.lat) if 'lat' in report else ''
+                    self.altitude = str(report.alt) if 'alt' in report else ''
+                    self.speed = str(report.speed) if 'speed' in report else ''
+                    self.track = str(report.track) if 'track' in report else ''
+                    self.climb = str(report.climb) if 'climb' in report else ''
+                    self.longitude_error = str(report.epx) if 'epx' in report else ''
+                    self.latitude_error = str(report.epy) if 'epy' in report else ''
+                    self.altitude_error = str(report.epv) if 'epv' in report else ''
+                    self.speed_error = str(report.eps) if 'eps' in report else ''
+                    self.climb_error = str(report.epc) if 'epc' in report else ''
+                    self.track_error = str(report.epd) if 'epd' in report else ''
+                    if not self.location_ready:
+                        logging.info('GPS 3D Lock Acquired')
+                    self.location_ready = True
+                # We've lost our GPS fix. Stop adding Location info
+                elif report['class'] == 'TPV' and report['mode'] != 3:
+                    if self.location_ready:
+                        logging.info('GPS 3D Lock Lost (Mode:{})'.format(report['mode']))
+                    self.location_ready = False
+                time.sleep(self.poll_rate)
+</code></pre>

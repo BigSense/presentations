@@ -1,0 +1,32 @@
+<h3>OWFS Sensor Handlers</h3>
+
+<pre><code class="hljs python">class OWFSSensorHandler(AbstractSensorHandler):
+
+    def __init__(self):
+        AbstractSensorHandler.__init__(self)
+        self.device = 'u'
+        self._connected = False
+
+    def _ensure_connect(self):
+        # Avoid a direct dependency
+        import ow
+        if not self._connected:
+            ow.init(self.device)
+            self._connected = True
+
+    def _sensors(self):
+        import ow
+        self._ensure_connect()
+        sensors = []
+        try:
+            for s in ow.Sensor('/').sensorList():
+                if hasattr(s, 'temperature'):
+                     sensors.append(TemperatureSensor(s))
+                if hasattr(s, 'humidity'):
+                    sensors.append(HumiditySensor(s))
+            return sensors
+        except ow.exUnknownSensor as e:
+            logging.warn('Error Reading 1-Wire: {}'.format(e))
+
+    sensors = property(_sensors, lambda self, v: None)
+</code></pre>

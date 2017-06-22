@@ -1,0 +1,11 @@
+<h3>Identifiers</h3>
+
+<pre><code class="hljs python">class NamedIdentifier(AbstractIdentifier):
+
+    def __init__(self):
+        AbstractIdentifier.__init__(self)
+        self.id = 'Unknown'
+
+    def identify(self):
+        return self.id
+</code></pre>

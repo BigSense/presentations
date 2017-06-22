@@ -1,0 +1,22 @@
+<h3>Identifiers</h3>
+
+<pre><code class="hljs python">class UUIDIdentifier(AbstractIdentifier):
+
+    id_file = property(lambda self: self._id_file, lambda self, value: self._init_id_file(value))
+
+    def __init__(self):
+        AbstractIdentifier.__init__(self)
+        self.id_file = 'uuid'
+
+    def _init_id_file(self, value):
+        if path.isfile(value):
+            with open(value, 'r') as ufile:
+                self.__id = ufile.read()
+        else:
+            self.__id = str(uuid.uuid4())
+            with open(value, 'w') as ufile:
+                ufile.write(self.__id)
+
+    def identify(self):
+        return self.__id
+</code></pre>

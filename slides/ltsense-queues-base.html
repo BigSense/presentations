@@ -1,0 +1,17 @@
+<h3>Queues</h3>
+
+<pre><code class="hljs python">class AbstractQueue(object):
+
+    def __init__(self):
+        object.__init__(self)
+        self.queue_timeout = 1.0  # in seconds
+        self.size = -1
+
+    def dequeue(self):
+        """Pulls latest item from queue or returns None"""
+        raise QueueException("Unimplemented Abstract Queue Function")
+
+    def enqueue(self, item):
+        """Adds element to queue"""
+        raise QueueException("Unimplemented Abstract Queue Function")
+</code></pre>

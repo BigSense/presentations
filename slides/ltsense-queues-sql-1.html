@@ -1,0 +1,18 @@
+<h3>Queues</h3>
+
+<pre><code class="hljs python">class SQLiteQueue(AbstractQueue):
+
+    def __init__(self):
+        AbstractQueue.__init__(self)
+        self.sql_file = None
+        self.__conn = None
+        self.sql_lock = Lock()
+
+    def _get_data_file(self):
+        return self.sql_file
+
+    def _set_data_file(self, df):
+        self.sql_file = df
+
+    data_file = property(_get_data_file, _set_data_file)
+</code></pre>

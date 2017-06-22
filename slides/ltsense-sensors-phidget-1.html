@@ -1,0 +1,14 @@
+<h3>Sensors</h3>
+
+<pre><code class="hljs python">class PhidgetSensor(AbstractSensor):
+
+    def __init__(self):
+        AbstractSensor.__init__(self)
+        # Can be analogue or digital
+        self.port_type = None
+        self.port_num = None
+        self.current_data = None
+        self.id = None
+        self.data_formula = None
+        self._model = None
+</code></pre>

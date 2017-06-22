@@ -1,0 +1,19 @@
+<h3>Queues</h3>
+
+<pre><code class="hljs python">class MemoryQueue(AbstractQueue):
+
+    def __init__(self):
+        AbstractQueue.__init__(self)
+        self.__queue = Queue()
+
+    def dequeue(self):
+        try:
+            return self.__queue.get(False, self.queue_timeout)
+        except Empty:
+            return None
+
+    def enqueue(self, item):
+        self.__queue.put(item)
+
+    size = property(lambda self: self.__queue.qsize(), lambda self, v: None)
+</code></pre>

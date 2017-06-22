@@ -1,0 +1,19 @@
+<h3>Queued Transport</h3>
+
+<pre><code class="hljs python">class QueuedTransport(AbstractTransport, Thread):
+
+    """Base class for all transports that wish to use a queueing system.
+    The send_package() function is implemented and a new abstract function,
+    _run_transport() needs to be implemented in the subclass to transport the
+    data."""
+
+    def __init__(self):
+
+        self.pause_rate = 0.10
+        self.timeout = 10.0
+        self.queue = None
+
+        AbstractTransport.__init__(self)
+        Thread.__init__(self)
+        self.start()
+</code></pre>

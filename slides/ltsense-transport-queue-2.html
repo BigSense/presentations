@@ -1,0 +1,32 @@
+<h3>Queued Transport</h3>
+
+<pre><code class="hljs python">    def run(self):
+        """Main thread to handle queue. In most cases, this function
+        should not need to be overridden."""
+
+        while not ltsense.exit_all_threads:
+            if self.queue is None:
+                logging.info('Queue Not Initalized Yet. Waiting...')
+                time.sleep(float(self.pause_rate))
+                continue
+
+            payload = self.queue.dequeue()
+            if payload is None:
+                continue
+
+            try:
+                if self._run_transport(payload):
+                    logging.debug('Payload transported. (Queue Size: %s)' % self.queue.size)
+                    time.sleep(float(self.pause_rate))
+                else:
+                    logging.warn('Error delivering payload. Requeueing (Queue Size:%s). Retry in %s' % (self.queue.size, self.timeout))
+                    self.queue.enqueue(payload)
+                    time.sleep(float(self.timeout))
+            except:
+                logging.error('Unknown exception %s. Requeueing (Queue Size:%s). Retry in %s' % (sys.exc_info()[0], self.queue.size, self.timeout))
+                self.queue.enqueue(payload)
+                time.sleep(float(self.timeout))
+
+        logging.info('Exit Detected. Stopping Transport Thread')
+
+</code></pre>
