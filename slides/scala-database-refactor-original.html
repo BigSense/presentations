@@ -1,0 +1,33 @@
+<h3>Database Model Refactor (original)</h3>
+<pre><code class="hljs scala">private def getDataModels(results : DBResult) : List[DataModel] = {
+
+  val ret = new ListBuffer[DataModel]
+  var prev : Long = -1;
+  if( results.results.length > 0) {
+    prev = Numbers.toLong(results.results.head("package_id"))
+  }
+  var dmodel : DataModel = new DataModel()
+  for( row <- results.results) {
+    //TODO: Should these three really be Ints instead of Longs? Why did this break anyway?
+    if( Numbers.toLong(row("package_id")) != prev) {
+      ret.append(dmodel)
+      dmodel = new DataModel()
+      log.debug("Changing Model from relay %s to %s".format(prev,row("package_id").asInstanceOf[Long]))
+    }
+    prev = Numbers.toLong(row("package_id"))
+...
+...
+   val sensorListBuf = new ListBuffer[SensorModel]
+   for( senrow <- results.results) {
+     var smodel : SensorModel = new SensorModel()
+     smodel.uniqueId = senrow("sensor").toString()
+     smodel.units = senrow("sensor_units").toString()
+     smodel.stype = senrow("sensor_type").toString()
+     smodel.data = senrow("sensor_data").toString()
+     sensorListBuf.append(smodel)
+   }
+   dmodel.sensors = sensorListBuf.toList
+  }
+  ret.append(dmodel)
+  ret.toList
+          ...</code></pre>

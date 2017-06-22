@@ -1,0 +1,26 @@
+<h3>Database Model Refactor (original)</h3>
+<pre><code class="hljs scala">  private def getDataModels(results : DBResult) : List[DataModel] =
+    results.results.groupBy( id => Numbers.toLong(id("package_id")) ).map { groupedRow =>
+
+      // Table Join / these fields will be identical
+      val row = groupedRow._2.head
+
+      val timestamp = row("time") match {
+        case e: Timestamp => e.getTime.toString
+        case s: String => s
+      }
+      val uniqueId = row("relay").toString
+      ...
+      ...
+      val sensors = groupedRow._2.map { row =>
+        SensorModel(
+          row("sensor").toString,
+          row("sensor_units").toString,
+          row("sensor_type").toString,
+          row("sensor_data").toString
+        )
+      }
+
+      DataModel(timestamp, uniqueId, sensors, gps)
+    }.toList
+</code></pre>

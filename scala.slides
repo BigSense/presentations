@@ -16,6 +16,7 @@ scala-converters-trait.html, scala-converters-units.html, scala-converters-units
 scala-spring-actions.md, scala-spring-validators.md, scala-spring-formats.md, scala-spring-logging.md
 scala-di-actions.md,scala-di-formats.md
 bigsense-server.md, scala-server-trait.md, scala-server-jetty.md, scala-server-tomcat.md, scala-server-tomcat-static.md
+scala-database-refactor-original.html, scala-database-refactor-refactor.html
 scala-other-components.md
 bigsense-config.md
 bigsense-rest-api.html, bigsense-example-query.html, bigsense-example-gps.html, bigsense-example-aggregate.md
