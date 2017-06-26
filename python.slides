@@ -6,10 +6,11 @@ ltsense-identifiers-diagram.md, ltsense-identifiers-base.html, ltsense-identifie
 ltsense-sensor-handlers.md, ltsense-sensor-handlers-base.html, ltsense-sensor-handlers-owfs.html, ltsense-sensor-handlers-phidgets.html
 ltsense-sensors-base.html, ltsense-sensors-owfs-base.html, ltsense-sensors-owfs-temp.html, ltsense-sensors-owfs-humidity.html, ltsense-sensors-phidget-1.html, ltsense-sensors-phidget-2.html
 ltsense-data.md, ltsense-data-base.html, ltsense-data-xml.html, ltsense-data-json.html
-ltsense-transports.md, ltsense-transport-abstract.html, ltsense-transport-queue.html, ltsense-transport-queue-2.html, ltsense-transport-queue-2.html, ltsense-transport-queue-http.html, ltsense-transport-local-file-1.html, ltsense-transport-local-file-2.html
+ltsense-transports.md, ltsense-transport-abstract.html, ltsense-transport-queue.html, ltsense-transport-queue-2.html, ltsense-transport-queue-3.html, ltsense-transport-queue-http.html, ltsense-transport-local-file-1.html, ltsense-transport-local-file-2.html
 ltsense-queues-base.html, ltsense-queues-memory.html, ltsense-queues-sql-1.html, ltsense-queues-sql-2.html
 ltsense-location.html
 ltsense-security-base.html, ltsense-security-pypy.html
+ltsense-config.html
 sense-xml.html, sense-xml-gps.html, sense-json-gps.html, sensedata-with-signature.html
 bigsense-rest-api.html, bigsense-example-query.html, bigsense-example-gps.html, bigsense-example-aggregate.md
 ltsense-demo.md
